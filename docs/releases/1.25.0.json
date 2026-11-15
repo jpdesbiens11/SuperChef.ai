@@ -9,6 +9,7 @@
   ],
   "nouveautes": [
     "La liste du Provigo est enregistrée dans ton classeur Google (nouvel onglet « Épicerie ») : articles ajoutés à la main, cases cochées de la semaine et rayons choisis. Le PC et le téléphone voient la même liste, et rien ne se perd au rechargement.",
+    "Une semaine pas encore approuvée reste telle quelle au rechargement (avant, l'app repigeait les soupers et la liste d'épicerie changeait). Provigo rappelle d'approuver la semaine, avec un bouton « Approuver », pour retrouver la même liste sur tous tes appareils.",
     "La liste se relit toute seule quand tu ouvres Provigo ou le garde-manger, ou quand tu reviens dans l'app : un ajout fait au PC apparaît au téléphone.",
     "Ce que le téléphone gardait (1.24.0) passe dans le classeur à la première ouverture.",
     "Un article ajouté à la main est aussi gardé au garde-manger (à 0 s'il faut l'acheter). Nouvelle zone « Maison » pour l'entretien et l'hygiène.",

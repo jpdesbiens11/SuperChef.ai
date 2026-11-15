@@ -70,7 +70,11 @@ test('Provigo : articles libres classés par rayon, gardés dans le classeur et 
   await page.locator('[data-go="provigo"]').click();
   await expect(page.locator('.glrow.libre')).toHaveText([/Kombucha maison/, /Papier toilette/]);
   await expect(page.locator('.glrow.libre', { hasText: 'Papier toilette' }).locator('input')).toBeChecked();
-  await expect(page.locator('.glrow:not(.libre)', { hasText: nomIng }).first().locator('input')).toBeChecked();
+  await expect(page.locator('.glrow:not(.libre)', { hasText: nomIng }).first().locator('input')).toBeChecked();   // même semaine : le brouillon est resté
+  // Semaine pas approuvée : Provigo le dit et l'approuve sur place.
+  await page.locator('#prov-approuver').click();
+  await expect(page.locator('#prov-approuver')).toHaveCount(0);
+  await expect.poll(() => [...sim.classeurs.values()][0].onglets['Plans de semaine'].length).toBeGreaterThan(1);
 
   // Un ajout fait sur l'autre appareil apparaît en revenant dans l'app.
   const c = [...sim.classeurs.values()][0].onglets['Épicerie'];
