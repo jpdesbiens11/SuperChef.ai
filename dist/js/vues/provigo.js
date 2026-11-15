@@ -1,67 +1,151 @@
 // 04 · Provigo : liste d'épicerie par rayon (R-10, R-11). Repris de Gordon Rams.ai.
-import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.24.0';
-import { el, ico } from '../el.js?v=1.24.0';
-import { getRecipe, majArticle, supprimerArticle } from '../donnees.js?v=1.24.0';
-import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy } from '../cuisine.js?v=1.24.0';
-import { frozen } from './fiche.js?v=1.24.0';
-import { setQty, addInv } from './garde-manger.js?v=1.24.0';
-import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.24.0';
-import { CATALOGUE, HORS_INVENTAIRE, rayonDe, cleRayon, ajouterLibre } from '../epicerie.js?v=1.24.0';
+import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.25.0';
+import { el, ico } from '../el.js?v=1.25.0';
+import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.25.0';
+import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.25.0';
+import { valeurCellule } from '../store.js?v=1.25.0';
+import { frozen } from './fiche.js?v=1.25.0';
+import { setQty, addInv } from './garde-manger.js?v=1.25.0';
+import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.25.0';
+import { CATALOGUE, rayonDe, cleRayon, ajouterLibre } from '../epicerie.js?v=1.25.0';
 
-// D-G-060 : articles libres (garde-manger, maison), gardés sur l'appareil jusqu'à « Retirer les articles pris ».
+/* ---------- D-G-062 : la liste vit dans l'onglet « Épicerie » du classeur ----------
+   L'écran change tout de suite ; l'écriture suit, une à la fois par ligne (deux touchers rapides ne font pas deux lignes).
+   On relit l'onglet en ouvrant Provigo ou le garde-manger et en revenant dans l'app : le PC et le téléphone voient la même liste. */
+const oui = (v) => /^(oui|true|vrai|1)$/i.test(String(v || '').trim());
+const semaine = () => iso(S.weekStart);
+const jour = () => iso(new Date());
+export const libres = () => S.prov.libres || (S.prov.libres = []);
+const nouvelId = () => `e-l-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+const idCoche = (key) => `e-c-${semaine()}-${slug(key) || 'x'}`;
+const idRayon = (cle) => `e-r-${slug(cle) || 'x'}`;
+
+export function depuisClasseur() {
+  const rows = S.prov.rows || [], w = semaine();
+  S.prov.libres = rows.filter((r) => r.Genre === 'libre' && r.Nom).map((r) => ({ id: r.id, nom: r.Nom, rayon: r.Rayon || rayonDe(r.Nom), pris: oui(r.Pris) }));
+  S.prov.checked = Object.fromEntries(rows.filter((r) => r.Genre === 'coche' && String(r['Semaine du']).slice(0, 10) === w && r['Clé']).map((r) => [r['Clé'], oui(r.Pris)]));
+  S.prov.appris = Object.fromEntries(rows.filter((r) => r.Genre === 'rayon' && r.Nom).map((r) => [r.Nom, r.Rayon]));
+}
+const file = new Map();
+function synchroniser(id, souhait) {
+  const p = (file.get(id) || Promise.resolve()).then(async () => {
+    const row = (S.prov.rows || []).find((r) => r.id === id), v = souhait();
+    if (!v) { if (row) await supprimerLigneEpi(row); return true; }
+    if (!row) { await ajouterLigneEpi({ id, ...v, 'Modifié le': jour() }); return true; }
+    const diff = Object.fromEntries(Object.entries(v).filter(([c, x]) => row[c] !== valeurCellule(x)));
+    if (Object.keys(diff).length) await majLigneEpi(row, { ...diff, 'Modifié le': jour() });
+    return true;
+  }).catch((e) => { toast('Épicerie non enregistrée dans ton classeur : ' + errText(e)); return false; });
+  file.set(id, p);
+  return p;
+}
+const syncLibre = (id) => synchroniser(id, () => {
+  const a = libres().find((x) => x.id === id);
+  return a && { Genre: 'libre', 'Semaine du': semaine(), Nom: a.nom, Rayon: a.rayon, Pris: a.pris };
+});
+const syncCoche = (key) => synchroniser(idCoche(key), () => ({ Genre: 'coche', 'Semaine du': semaine(), 'Clé': key, Nom: (S.prov.lines || []).find((l) => l.key === key)?.name || key, Pris: !!S.prov.checked[key] }));
+const syncRayon = (cle) => synchroniser(idRayon(cle), () => S.prov.appris[cle] && { Genre: 'rayon', Nom: cle, Rayon: S.prov.appris[cle] });
+
+let relecture = null;
+export function rafraichirEpicerie() {
+  if (!S.ctx || relecture) return relecture;
+  relecture = (async () => {
+    try { await Promise.all(file.values()); await relireEpicerie(); depuisClasseur(); render(); } catch (e) { /* hors ligne : on garde l'écran */ }
+    relecture = null;
+  })();
+  return relecture;
+}
+
+// Une fois : ce que 1.24.0 gardait dans le téléphone passe dans le classeur.
 const CLE_LIBRES = 'superchef-epicerie-libre', CLE_APPRIS = 'superchef-epicerie-rayons';
-const lire = (k, defaut) => { try { return JSON.parse(localStorage.getItem(k) || 'null') || defaut; } catch (_) { return defaut; } };
-const ecrire = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (_) { /* stockage absent */ } };
-export const libres = () => (S.prov.libres ||= lire(CLE_LIBRES, []));
-const garderLibres = (l) => { S.prov.libres = l; ecrire(CLE_LIBRES, l); };
+const lireLocal = (k) => { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (_) { return null; } };
+const oublier = (k) => { try { localStorage.removeItem(k); } catch (_) { /* stockage absent */ } };
+export async function initEpicerie() {
+  depuisClasseur();
+  const envois = [], cles = [];
+  const vieux = lireLocal(CLE_LIBRES);
+  if (Array.isArray(vieux)) {
+    cles.push(CLE_LIBRES);
+    for (const a of vieux) {
+      if (!a || !a.nom || libres().some((x) => cleRayon(x.nom) === cleRayon(a.nom) && x.pris === !!a.pris)) continue;
+      const id = nouvelId(); libres().push({ id, nom: a.nom, rayon: a.rayon || rayonDe(a.nom, S.prov.appris), pris: !!a.pris }); envois.push(syncLibre(id));
+    }
+  }
+  const appris = lireLocal(CLE_APPRIS);
+  if (appris && typeof appris === 'object') {
+    cles.push(CLE_APPRIS);
+    for (const [c, r] of Object.entries(appris)) if (!S.prov.appris[c]) { S.prov.appris[c] = r; envois.push(syncRayon(c)); }
+  }
+  const cleSem = 'superchef-provigo-' + semaine(), coches = lireLocal(cleSem);
+  if (coches && typeof coches === 'object') {
+    cles.push(cleSem);
+    for (const [k, v] of Object.entries(coches)) if (v && !S.prov.checked[k]) { S.prov.checked[k] = true; envois.push(syncCoche(k)); }
+  }
+  if (!cles.length) return;
+  if ((await Promise.all(envois)).every(Boolean)) cles.forEach(oublier);
+  render();
+}
 
+/* ---------- articles libres (D-G-060), gardés aussi au garde-manger (D-G-062) ---------- */
+// L'article entre dans l'inventaire (quantité 0 : à acheter) s'il n'y est pas : il revient au garde-manger, prêt à remettre sur la liste.
+async function memoriser(nom, rayon) {
+  if (!S.inv.items || invMatch(ingKey(nom))) return;
+  try { await ajouterArticle(nom, zoneOf(rayon), rayon, 0); render(); } catch (e) { toast(errText(e)); }
+}
 export function ajouterArticleLibre(nom, rayonChoisi) {
-  const appris = lire(CLE_APPRIS, {}), auto = rayonDe(nom, appris), rayon = rayonChoisi || auto;
-  const r = ajouterLibre(libres(), nom, rayon);
+  const auto = rayonDe(nom, S.prov.appris), rayon = rayonChoisi || auto;
+  const r = ajouterLibre(libres(), nom, rayon, nouvelId());
   if (r.doublon) { toast(`« ${r.doublon.nom} » est déjà sur la liste (${r.doublon.rayon}).`); return false; }
   if (!r.article) return false;
-  if (rayonChoisi && rayonChoisi !== auto) { appris[cleRayon(nom)] = rayonChoisi; ecrire(CLE_APPRIS, appris); }
-  garderLibres(r.liste); render();
+  if (rayonChoisi && rayonChoisi !== auto) { const c = cleRayon(nom); S.prov.appris[c] = rayonChoisi; syncRayon(c); }
+  S.prov.libres = r.liste; render();
   toast(`« ${r.article.nom} » ajouté · ${rayon}`);
+  syncLibre(r.article.id); memoriser(r.article.nom, rayon);
   return true;
 }
-// Choix rapide : touche une fois pour l'ajouter, une 2e fois pour le retirer.
-export function basculerIdee(nom) {
+// Choix rapide (et bouton « Épicerie » du garde-manger) : touche une fois pour l'ajouter, une 2e fois pour le retirer.
+export const surLaListe = (nom) => libres().some((x) => !x.pris && cleRayon(x.nom) === cleRayon(nom));
+export function basculerIdee(nom, rayon) {
   const a = libres().find((x) => !x.pris && cleRayon(x.nom) === cleRayon(nom));
-  if (a) { garderLibres(libres().filter((x) => x !== a)); render(); toast(`« ${a.nom} » retiré`); } else ajouterArticleLibre(nom);
+  if (a) { S.prov.libres = libres().filter((x) => x !== a); render(); toast(`« ${a.nom} » retiré de l'épicerie`); syncLibre(a.id); }
+  else ajouterArticleLibre(nom, rayon && DEPTS.includes(rayon) ? rayon : '');
 }
 export async function cocherLibre(id) {
   const a = libres().find((x) => x.id === id); if (!a) return;
-  a.pris = !a.pris; garderLibres([...libres()]); render();
-  if (HORS_INVENTAIRE.has(a.rayon)) return;                      // le papier de toilette ne va pas au garde-manger
+  a.pris = !a.pris; render(); syncLibre(id);
   const m = invMatch(ingKey(a.nom));
   if (a.pris) { if (m) await setQty(m, m.qty + 1); else await addInv(a.nom); } else if (m && m.qty > 0) await setQty(m, m.qty - 1);
 }
 export function retirerLibre(id) {
   const avant = libres(), a = avant.find((x) => x.id === id); if (!a) return;
-  garderLibres(avant.filter((x) => x.id !== id)); render();
-  toast(`« ${a.nom} » retiré`, { label: 'Annuler', fn: () => { garderLibres(avant); render(); } });
+  S.prov.libres = avant.filter((x) => x.id !== id); render(); syncLibre(id);
+  toast(`« ${a.nom} » retiré`, { label: 'Annuler', fn: () => { S.prov.libres = avant; render(); syncLibre(id); } });
 }
 export function viderPris() {
-  const avant = libres(), n = avant.filter((x) => x.pris).length; if (!n) return;
-  garderLibres(avant.filter((x) => !x.pris)); render();
-  toast(`${n} article${n > 1 ? 's' : ''} pris retiré${n > 1 ? 's' : ''}`, { label: 'Annuler', fn: () => { garderLibres(avant); render(); } });
+  const avant = libres(), pris = avant.filter((x) => x.pris); if (!pris.length) return;
+  S.prov.libres = avant.filter((x) => !x.pris); render(); pris.forEach((x) => syncLibre(x.id));
+  const n = pris.length;
+  toast(`${n} article${n > 1 ? 's' : ''} pris retiré${n > 1 ? 's' : ''}`, { label: 'Annuler', fn: () => { S.prov.libres = avant; render(); pris.forEach((x) => syncLibre(x.id)); } });
 }
 export const focusLibre = () => { const i = $('#epi-nom'); if (i) { i.value = ''; i.focus(); } };
 
+const puceIdee = (n, rayon, deja) => el('button', { type: 'button', class: 'btn', 'data-epiajout': n, 'data-rayon': rayon || null, 'aria-pressed': String(deja.has(cleRayon(n))) }, n);
 function formLibre() {
+  const deja = new Set(libres().filter((a) => !a.pris).map((a) => cleRayon(a.nom)));
+  // Ce qui revient souvent : les articles épuisés du garde-manger (pas les essentiels, toujours à la maison).
+  const epuises = (S.inv.items || []).filter((i) => i.qty <= 0 && !i.essential);
   return el('div', { class: 'frame epi-libre' },
     el('form', { class: 'add-form', id: 'epiform' },
       el('input', { id: 'epi-nom', list: 'epi-catalogue', placeholder: 'Ajouter un article (ex. savon)', 'aria-label': 'Article à ajouter', autocomplete: 'off', enterkeyhint: 'done' }),
       el('select', { id: 'epi-rayon', 'aria-label': 'Rayon' }, el('option', { value: '' }, 'Rayon auto'), DEPTS.map((d) => el('option', { value: d }, d))),
       el('button', { class: 'btn primary', type: 'submit' }, ico('plus'), 'Ajouter')),
-    el('datalist', { id: 'epi-catalogue' }, CATALOGUE.map(([n]) => el('option', { value: n }))),
+    el('datalist', { id: 'epi-catalogue' }, [...new Set([...(S.inv.items || []).map((i) => i.name), ...CATALOGUE.map(([n]) => n)])].map((n) => el('option', { value: n }))),
+    epuises.length ? el('div', { class: 'epi-groupe epi-epuises' }, el('b', {}, `À racheter · épuisé au garde-manger (${epuises.length})`),
+      el('div', { class: 'epi-puces' }, epuises.map((i) => puceIdee(i.name, i.dept, deja)))) : null,
     el('details', { class: 'epi-idees' }, el('summary', {}, 'Choix rapides : garde-manger et maison'),
       DEPTS.map((d) => {
         const ns = CATALOGUE.filter(([, r]) => r === d); if (!ns.length) return null;
-        const deja = new Set(libres().filter((a) => !a.pris).map((a) => cleRayon(a.nom)));
-        return el('div', { class: 'epi-groupe' }, el('b', {}, d), el('div', { class: 'epi-puces' },
-          ns.map(([n]) => el('button', { type: 'button', class: 'btn', 'data-epiajout': n, 'aria-pressed': String(deja.has(cleRayon(n))) }, n))));
+        return el('div', { class: 'epi-groupe' }, el('b', {}, d), el('div', { class: 'epi-puces' }, ns.map(([n]) => puceIdee(n, d, deja))));
       })));
 }
 const ligneLibre = (a) => el('div', { class: 'glrow libre' },
@@ -69,13 +153,8 @@ const ligneLibre = (a) => el('div', { class: 'glrow libre' },
     el('div', { class: 't' }, el('span', {}, a.nom), el('small', {}, 'Ajouté à la main'))),
   el('button', { class: 'btn icon', 'data-epidel': a.id, 'aria-label': `Retirer ${a.nom} de la liste`, title: 'Retirer' }, '×'));
 
-// R-11 : les cases cochées restent sur le téléphone, par semaine (aucune recette ni jeton).
-const provKey = () => 'superchef-provigo-' + iso(S.weekStart);
-function loadChecked() { try { S.prov.checked = JSON.parse(localStorage.getItem(provKey()) || '{}'); } catch (_) { S.prov.checked = {}; } }
-function saveChecked() { try { localStorage.setItem(provKey(), JSON.stringify(S.prov.checked)); } catch (_) {} }
-
 export function buildProvigo() {
-  S.prov.err = null; loadChecked();
+  S.prov.err = null;
   const ids = [...S.plan.filter(Boolean), ...(S.dess || []).map((x) => x.id)];
   const pages = ids.map((id) => ({ id, d: getRecipe(id) }));
   const map = {};
@@ -95,7 +174,7 @@ export function buildProvigo() {
 }
 export async function toggleGrocery(key) {
   const l = (S.prov.lines || []).find((x) => x.key === key); if (!l) return;
-  const on = !S.prov.checked[key]; S.prov.checked[key] = on; saveChecked(); render();
+  const on = !S.prov.checked[key]; S.prov.checked[key] = on; render(); syncCoche(key);
   const m = invMatch(key);
   if (on) { if (m) await setQty(m, m.qty + 1); else await addInv(l.name); } else if (m && m.qty > 0) await setQty(m, m.qty - 1);
 }

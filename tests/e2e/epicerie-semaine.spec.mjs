@@ -17,8 +17,11 @@ async function demarrer(page) {
   return { ...b, erreurs };
 }
 
-test('Provigo : articles libres classés par rayon', async ({ page }) => {
-  const { erreurs } = await demarrer(page);
+const epicerie = (sim) => { const t = [...sim.classeurs.values()][0].onglets['Épicerie']; const h = t[0]; return t.slice(1).map((l) => Object.fromEntries(h.map((c, j) => [c, l[j] ?? '']))); };
+const inventaire = (sim) => { const t = [...sim.classeurs.values()][0].onglets.Inventaire; const h = t[0]; return t.slice(1).map((l) => Object.fromEntries(h.map((c, j) => [c, l[j] ?? '']))); };
+
+test('Provigo : articles libres classés par rayon, gardés dans le classeur et au garde-manger', async ({ page }) => {
+  const { sim, erreurs } = await demarrer(page);
   await page.locator('[data-go="provigo"]').click();
   await expect(page.locator('.glrow').first()).toBeVisible();
   // Tapé à la main : le rayon se trouve tout seul.
@@ -27,35 +30,79 @@ test('Provigo : articles libres classés par rayon', async ({ page }) => {
   await expect(page.locator('.dept', { hasText: 'Hygiène et santé' }).locator('.glrow.libre')).toHaveText(/Papier toilette/);
   await expect(page.locator('#epi-nom')).toHaveValue('');
   await expect(page.locator('#epi-nom')).toBeFocused();                   // on enchaîne les ajouts
+  // D-G-062 : écrit dans l'onglet Épicerie, et gardé au garde-manger (zone Maison, quantité 0 : à acheter).
+  await expect.poll(() => epicerie(sim).map((r) => [r.Genre, r.Nom, r.Rayon, r.Pris])).toEqual([['libre', 'Papier toilette', 'Hygiène et santé', 'non']]);
+  await expect.poll(() => inventaire(sim).filter((r) => r.Nom === 'Papier toilette').map((r) => [r.Zone, r['Quantité']])).toEqual([['Maison', '0']]);
   // Doublon refusé.
   await page.locator('#epi-nom').fill('Papier Toilette');
   await page.locator('#epi-nom').press('Enter');
   await expect(page.locator('#toast')).toHaveText(/déjà sur la liste/);
-  // Rayon choisi à la main.
+  // Rayon choisi à la main : retenu dans le classeur.
   await page.locator('#epi-nom').fill('Kombucha maison');
   await page.locator('#epi-rayon').selectOption('Produits laitiers et œufs');
   await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
   await expect(page.locator('.dept', { hasText: 'Produits laitiers et œufs' }).locator('.glrow.libre')).toHaveText(/Kombucha maison/);
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'rayon').map((r) => [r.Nom, r.Rayon])).toEqual([['kombucha maison', 'Produits laitiers et œufs']]);
   // Choix rapides : un toucher ajoute, un 2e retire.
   await page.locator('.epi-idees summary').click();
-  const savon = page.locator('[data-epiajout="Savon à vaisselle"]');
+  const savon = page.locator('.epi-idees [data-epiajout="Savon à vaisselle"]');
   await savon.click();
   await expect(savon).toHaveAttribute('aria-pressed', 'true');
   await expect(page.locator('.dept', { hasText: 'Entretien' }).locator('.glrow.libre')).toHaveText(/Savon à vaisselle/);
   await expect(page.locator('.epi-idees')).toHaveAttribute('open', '');    // le volet reste ouvert (mise à jour en place)
   await savon.click();
   await expect(savon).toHaveAttribute('aria-pressed', 'false');
-  // Cocher, puis retirer les articles pris ; la liste reste après un rechargement de l'écran.
   await page.locator('.epi-idees summary').click();
+  // Cocher un article libre et un ingrédient de la semaine : les deux cases sont dans le classeur.
   await page.locator('.glrow.libre', { hasText: 'Papier toilette' }).locator('input').check();
   await expect(page.locator('.glrow.libre', { hasText: 'Papier toilette' }).locator('.gl')).toHaveClass(/on/);
+  const ingredient = page.locator('.glrow:not(.libre)').first();
+  const nomIng = (await ingredient.locator('.t > span').textContent()).trim();
+  await ingredient.locator('input').check();
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'coche').map((r) => [r.Nom, r.Pris])).toEqual([[nomIng, 'oui']]);
+  await expect.poll(() => epicerie(sim).find((r) => r.Nom === 'Papier toilette')?.Pris).toBe('oui');
+  await expect.poll(() => inventaire(sim).find((r) => r.Nom === 'Papier toilette')?.['Quantité']).toBe('1');
+
+  // Rechargement (ou autre appareil) : tout revient du classeur, rien du téléphone.
+  await page.evaluate(() => { for (const k of Object.keys(localStorage)) if (/epicerie|provigo/.test(k)) localStorage.removeItem(k); });
+  await page.reload();
+  await page.getByRole('button', { name: /Continuer|Se connecter/ }).click();
+  await page.locator('[data-go="provigo"]').click();
+  await expect(page.locator('.glrow.libre')).toHaveText([/Kombucha maison/, /Papier toilette/]);
+  await expect(page.locator('.glrow.libre', { hasText: 'Papier toilette' }).locator('input')).toBeChecked();
+  await expect(page.locator('.glrow:not(.libre)', { hasText: nomIng }).first().locator('input')).toBeChecked();
+
+  // Un ajout fait sur l'autre appareil apparaît en revenant dans l'app.
+  const c = [...sim.classeurs.values()][0].onglets['Épicerie'];
+  c.push(c[0].map((col) => ({ id: 'e-l-pc1', Genre: 'libre', Nom: 'Piles AA', Rayon: 'Entretien', Pris: 'non' }[col] ?? '')));
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.locator('.dept', { hasText: 'Entretien' }).locator('.glrow.libre')).toHaveText(/Piles AA/);
+
+  // Retirer les articles pris : la ligne sort du classeur.
   await page.locator('#epi-vider').click();
   await expect(page.locator('.glrow.libre', { hasText: 'Papier toilette' })).toHaveCount(0);
-  await page.locator('[data-go="semaine"]').click();
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'libre').map((r) => r.Nom)).toEqual(['Kombucha maison', 'Piles AA']);
+
+  // Garde-manger : l'article ajouté à la main y est, et revient sur la liste en un toucher.
+  await page.locator('[data-go="livre"]').click();
+  const pt = page.locator('.inv-row', { hasText: 'Papier toilette' });
+  await expect(page.locator('.zone').filter({ has: page.locator('h3', { hasText: /^Maison/ }) })).toContainText('Papier toilette');
+  await expect(pt.locator('[data-invepi]')).toHaveAttribute('aria-pressed', 'false');
+  await pt.locator('[data-invepi]').click();
+  await expect(pt.locator('[data-invepi]')).toHaveAttribute('aria-pressed', 'true');
   await page.locator('[data-go="provigo"]').click();
-  await expect(page.locator('.glrow.libre')).toHaveText([/Kombucha maison/]);
-  await page.locator('[data-epidel]').click();
-  await expect(page.locator('.glrow.libre')).toHaveCount(0);
+  await expect(page.locator('.dept', { hasText: 'Hygiène et santé' }).locator('.glrow.libre')).toHaveText(/Papier toilette/);
+  await page.locator('[data-epidel]').first().click();
+  expect(erreurs).toEqual([]);
+});
+
+test('D-G-062 : la liste gardée dans le téléphone (1.24.0) passe dans le classeur', async ({ page }) => {
+  await page.addInitScript(() => { if (!sessionStorage.getItem('fait')) { sessionStorage.setItem('fait', '1'); localStorage.setItem('superchef-epicerie-libre', JSON.stringify([{ id: 'x-1', nom: 'Essuie-tout', rayon: 'Entretien', pris: false }])); } });
+  const { sim, erreurs } = await demarrer(page);
+  await expect.poll(() => epicerie(sim).map((r) => [r.Genre, r.Nom, r.Rayon])).toEqual([['libre', 'Essuie-tout', 'Entretien']]);
+  expect(await page.evaluate(() => localStorage.getItem('superchef-epicerie-libre'))).toBeNull();
+  await page.locator('[data-go="provigo"]').click();
+  await expect(page.locator('.glrow.libre')).toHaveText([/Essuie-tout/]);
   expect(erreurs).toEqual([]);
 });
 

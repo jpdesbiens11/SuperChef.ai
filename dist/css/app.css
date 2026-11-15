@@ -414,3 +414,9 @@ html[data-skin="ardoise"] .frame{border-color:var(--line)}
 .glrow.libre .btn.icon{flex:none;font-size:1.3rem}
 .sem-outils .dp-astuce{font-size:.86rem;line-height:1.3}
 .daytog.serre{margin-bottom:12px}
+
+/* D-G-062 : garde-manger → liste d'épicerie, articles épuisés à racheter */
+.inv-row .epi-btn{min-height:34px;min-width:0;padding:0 10px;margin-top:4px;font-size:.82rem;display:inline-flex}
+.inv-row .epi-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--tint);color:var(--accent-ink)}
+.inv-row.zero .epi-btn{text-decoration:none}
+.epi-epuises{margin:12px 0 2px}

@@ -1,7 +1,7 @@
 // D-G-060 : articles libres de l'épicerie, classés par rayon tout seuls.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { CATALOGUE, duCatalogue, rayonDe, ajouterLibre, nomPropre, cleRayon, HORS_INVENTAIRE } from '../../dist/js/epicerie.js';
+import { CATALOGUE, duCatalogue, rayonDe, ajouterLibre, nomPropre, cleRayon } from '../../dist/js/epicerie.js';
 import { DEPTS } from '../../dist/js/etat.js';
 
 test('le catalogue n\'utilise que des rayons connus, sans doublon', () => {
@@ -11,7 +11,6 @@ test('le catalogue n\'utilise que des rayons connus, sans doublon', () => {
     assert.ok(DEPTS.includes(rayon), `${nom} : ${rayon}`);
     assert.ok(!vus.has(cleRayon(nom)), `doublon : ${nom}`); vus.add(cleRayon(nom));
   }
-  for (const r of HORS_INVENTAIRE) assert.ok(DEPTS.includes(r));
 });
 
 test('rayon des choix préprogrammés et des noms voisins', () => {

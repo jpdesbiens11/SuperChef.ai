@@ -1,5 +1,5 @@
 // État et constantes partagés, repris de Gordon Rams.ai.
-import { el } from './el.js?v=1.24.0';
+import { el } from './el.js?v=1.25.0';
 
 export const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 export const BASE_DAYS = 4; // dimanche au mercredi par défaut ; jeudi à samedi au besoin
@@ -14,7 +14,7 @@ export const STEPS = [
 export const READY = new Set(STEPS.map((s) => s.id));
 // D-G-060 : Collations et boissons, Hygiène et santé (consommables de la maison, avec Entretien).
 export const DEPTS = ['Fruits et légumes', 'Boulangerie', 'Viandes', 'Poissonnerie', 'Charcuterie et fromages', 'Produits laitiers et œufs', 'Épicerie sèche', 'Conserves', 'Épices', 'Collations et boissons', 'Surgelés', 'Hygiène et santé', 'Entretien'];
-export const ZONES = ['Frigo', 'Congélateur', 'Garde-manger', 'Épices', 'Outils'];
+export const ZONES = ['Frigo', 'Congélateur', 'Garde-manger', 'Épices', 'Maison', 'Outils']; // Maison : entretien, hygiène (D-G-062)
 export const TYPES = ['Souper', 'Soupe', 'Accompagnement', 'Déjeuner', 'Dessert', 'Collation', 'Base & sauce'];
 export const PROTS = ['Bœuf', 'Porc', 'Poulet', 'Veau', 'Poisson & fruits de mer', 'Végé', 'Œufs'];
 export const CUIS = ['Québécoise', 'Italienne', 'Asiatique', 'Mexicaine', 'Indienne', 'Méditerranéenne', 'Moyen-orientale', 'Française', 'Russe', 'Classique'];
@@ -32,7 +32,7 @@ export const S = {
   timers: {}, wake: null, pages: {},
   tri: { list: null, idx: 0, loading: false, last: null }, lib: { mode: 'browse', q: '', type: 'Tous', statut: 'Tous', cuisine: 'Toutes' },
   inv: { items: null, loading: false },
-  prov: { lines: null, loading: false, checked: {} }, have: new Set(),
+  prov: { lines: null, loading: false, checked: {}, libres: [], appris: {}, rows: [] }, have: new Set(),
   bil: { items: null, loading: false, form: {}, done: {} },
   preview: null, recent: new Set(), swapped: null
 };
