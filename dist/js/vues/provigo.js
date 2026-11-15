@@ -201,6 +201,9 @@ export function viewProvigo() {
   else if (S.prov.err) out.push(noticeWarn(S.prov.err));
   else if (!S.prov.lines) out.push(skeleton(), el('p', { class: 'label', style: 'margin-top:10px' }, 'Lecture des fiches de la semaine…'));
   else {
+    // D-G-062 : la liste suit les soupers ; tant que la semaine n'est pas approuvée, l'autre appareil ne les a pas.
+    if (!S.saved) out.push(noticeWarn('Semaine pas encore approuvée : approuve-la pour retrouver cette liste sur ton PC et ton téléphone.',
+      el('button', { class: 'btn', id: 'prov-approuver', disabled: S.saving }, ico('save'), S.saving ? 'Enregistrement…' : 'Approuver')));
     if (S.prov.missing && S.prov.missing.length) out.push(noticeWarn(`Sans liste d'ingrédients : ${S.prov.missing.join(', ')}. Ces soupers ne sont pas dans la liste.`));
     const had = (l) => !l.home && S.have.has(l.key);
     buy = S.prov.lines.filter((l) => !l.home && !had(l)); home = S.prov.lines.filter((l) => l.home); mine = S.prov.lines.filter(had);

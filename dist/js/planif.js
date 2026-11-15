@@ -1,5 +1,5 @@
 // Planification de la semaine et règle des 3 semaines (R-07, R-08, R-09). Repris de Gordon Rams.ai.
-import { S, DAYS, GAP_DAYS, render, toast, errText } from './etat.js?v=1.25.0';
+import { S, DAYS, GAP_DAYS, iso, render, toast, errText } from './etat.js?v=1.25.0';
 import { majRecette } from './donnees.js?v=1.25.0';
 
 export function tooSoon(r) { if (!r.last) return false; const d = Math.abs((new Date(S.weekStart) - new Date(r.last + 'T12:00:00')) / 864e5); return d < GAP_DAYS; }
@@ -68,4 +68,24 @@ export async function setFixed(i, id) { // id=null : retirer le jour fixe de ce 
     toast(id ? `${S.byId[id].name} : chaque ${DAYS[i].toLowerCase()}.` : `Plus de recette fixe le ${DAYS[i].toLowerCase()}.`);
   } catch (e) { toast('Le classeur n\'a pas enregistré le jour fixe : ' + errText(e)); }
   render();
+}
+
+// D-G-062 : le brouillon de la semaine (pas encore approuvé) reste au rechargement, sur cet appareil.
+// Sans lui, un rechargement repigeait la semaine et la liste d'épicerie changeait. Approuver l'efface.
+const cleBrouillon = () => 'superchef-brouillon-' + iso(S.weekStart);
+export function garderBrouillon() {
+  try {
+    if (S.saved || !S.plan.some(Boolean)) localStorage.removeItem(cleBrouillon());
+    else localStorage.setItem(cleBrouillon(), JSON.stringify({ plan: S.plan, on: S.on, pins: [...(S.pins || [])], dess: S.dess || [] }));
+  } catch (_) { /* stockage absent */ }
+}
+export function reprendreBrouillon() {
+  let b = null;
+  try { b = JSON.parse(localStorage.getItem(cleBrouillon()) || 'null'); } catch (_) { return false; }
+  if (!b || !Array.isArray(b.plan) || b.plan.length !== DAYS.length || !Array.isArray(b.on)) return false;
+  if (!b.plan.some(Boolean) || !b.plan.every((id) => !id || S.byId[id])) return false;   // vide (livre pas encore importé) ou recette supprimée : on repige
+  S.plan = b.plan; S.on = DAYS.map((d, i) => !!b.on[i]); S.pins = new Set((b.pins || []).filter((i) => S.plan[i]));
+  S.dess = (b.dess || []).filter((x) => S.byId[x.id]);
+  S.saved = false; S.prov.lines = null; S.swapped = DAYS.map(() => new Set());
+  return true;
 }

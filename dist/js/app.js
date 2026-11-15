@@ -6,7 +6,7 @@ import { creerAuth } from './auth.js?v=1.25.0';
 import { creerDrive } from './drive.js?v=1.25.0';
 import { ouvrirOuCreer, noterProprietaire, texteReparation } from './store.js?v=1.25.0';
 import { chargerTout, loadPlan, loadRecent } from './donnees.js?v=1.25.0';
-import { draftWeek, swap, toggleDay, setFixed } from './planif.js?v=1.25.0';
+import { draftWeek, swap, toggleDay, setFixed, garderBrouillon, reprendreBrouillon } from './planif.js?v=1.25.0';
 import { ac, addTimer, toggleTimer, dismissTimer, setSound, soundKey, SOUNDS, wakeOn, wakeOff, paintLock } from './minuteurs.js?v=1.25.0';
 import { noticeWarn, setStars, setTag, setStatut } from './vues/commun.js?v=1.25.0';
 import { viewWeek, savePlan, openPicker, closePicker, pickList, choosePick, openDessert, closeDessert, renderDessert, dessertList, addDessert, removeDessert, basculerVueSemaine } from './vues/semaine.js?v=1.25.0';
@@ -68,6 +68,7 @@ function doRender() {
   if (vue && vue === vueRendue && EN_PLACE.has(vue)) patcher($('#main'), kids);
   else ajouter(vider($('#main')), kids); // ajouter() saute null, false et '' (un « null » s'affichait sous les zones vides)
   vueRendue = vue;
+  if (S.ctx && !S.loading && S.weekStart) garderBrouillon();
   if (S.view === 'poele') paintLock();
   $('#sync').textContent = !S.ctx ? (S.err ? 'Hors ligne' : 'Connexion à Google…') : S.loading ? 'Lecture du livre…' : `${S.recipes.length} soupers dans le livre`;
   $('#comptebtn').hidden = !S.ctx;
@@ -134,7 +135,8 @@ document.addEventListener('click', (e) => {
   if (b.id === 'gen-trier') { closeGen(); closeCompte(); setView('tri'); return; }
   if (b.id === 'deconnexion') { auth?.deconnecter(); memoriser(''); closeCompte(); S.ctx = null; S.book = []; render(); return; }
   if (!S.ctx) return;
-  if (b.id === 'semvue') { basculerVueSemaine(); return; }          // D-G-061 : vue compacte ou détaillée
+  if (b.id === 'semvue') { basculerVueSemaine(); return; }
+  if (b.id === 'prov-approuver') { savePlan(); return; }            // D-G-062 : approuver depuis Provigo          // D-G-061 : vue compacte ou détaillée
   if (d.swap) { swap(+d.swap); return; }
   if (d.dtog) { toggleDay(+d.dtog); return; }
   if (b.id === 'adddess') { openDessert(); return; }
@@ -290,7 +292,9 @@ async function boot() {
   try {
     await chargerTout();
     loadRecent();
-    if (!loadPlan()) draftWeek(); else { S.saved = true; S.swapped = DAYS.map(() => new Set()); }
+    const approuvee = loadPlan();
+    if (reprendreBrouillon()) { /* D-G-062 : le brouillon de cet appareil, tel qu'on l'a laissé */ }
+    else if (!approuvee) draftWeek(); else { S.saved = true; S.swapped = DAYS.map(() => new Set()); }
     initEpicerie();                                                    // D-G-062 : liste du classeur (et ce que le téléphone gardait)
   } catch (e) { S.err = errText(e); }
   S.loading = false; S.prov.lines = null; S.bil.items = null; S.tri.list = null; S.pages = {};
