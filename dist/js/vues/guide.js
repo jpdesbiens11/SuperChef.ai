@@ -5,12 +5,12 @@
 // stock, tri, approbation) ; le guide passe seul à la suite quand c'est fait. La bulle montre le fil d'Ariane depuis
 // l'accueil, « Suivant » à chaque étape, ◀ ▶ ×, « Revoir le chemin » et « Plus lent », en gros caractères (1.23.1 : sans « Écouter »).
 // Une personne nouvelle le voit dès l'accueil ; il se reprend après un rechargement ; Compte → « Lancer le guide » le relance.
-import { S, $ } from '../etat.js?v=1.23.2';
-import { el, ico, vider } from '../el.js?v=1.23.2';
-import { ETAPES, ANCIENNES, RETIREES, base, filDe, prochainToucher, val } from './guide-etapes.js?v=1.23.2';
-import * as D from './guide-doigt.js?v=1.23.2';
+import { S, $ } from '../etat.js?v=1.24.0';
+import { el, ico, vider } from '../el.js?v=1.24.0';
+import { ETAPES, ANCIENNES, RETIREES, base, filDe, prochainToucher, val } from './guide-etapes.js?v=1.24.0';
+import * as D from './guide-doigt.js?v=1.24.0';
 
-export { souperDuGuide } from './guide-etapes.js?v=1.23.2';
+export { souperDuGuide } from './guide-etapes.js?v=1.24.0';
 const CLE = 'superchef-guide', FIN = 'superchef-guide-fin', VITESSE = 'superchef-guide-vitesse';
 const ecranL = () => Math.min(window.innerWidth, document.documentElement.clientWidth || Infinity, window.visualViewport?.width || Infinity);
 const ecranH = () => Math.min(window.innerHeight, window.visualViewport?.height || Infinity);

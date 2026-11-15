@@ -1,5 +1,5 @@
 // État et constantes partagés, repris de Gordon Rams.ai.
-import { el } from './el.js?v=1.23.2';
+import { el } from './el.js?v=1.24.0';
 
 export const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 export const BASE_DAYS = 4; // dimanche au mercredi par défaut ; jeudi à samedi au besoin
@@ -12,7 +12,8 @@ export const STEPS = [
   { n: '06', id: 'bilan', label: 'Bilan' }
 ];
 export const READY = new Set(STEPS.map((s) => s.id));
-export const DEPTS = ['Fruits et légumes', 'Boulangerie', 'Viandes', 'Poissonnerie', 'Charcuterie et fromages', 'Produits laitiers et œufs', 'Épicerie sèche', 'Conserves', 'Épices', 'Surgelés', 'Entretien'];
+// D-G-060 : Collations et boissons, Hygiène et santé (consommables de la maison, avec Entretien).
+export const DEPTS = ['Fruits et légumes', 'Boulangerie', 'Viandes', 'Poissonnerie', 'Charcuterie et fromages', 'Produits laitiers et œufs', 'Épicerie sèche', 'Conserves', 'Épices', 'Collations et boissons', 'Surgelés', 'Hygiène et santé', 'Entretien'];
 export const ZONES = ['Frigo', 'Congélateur', 'Garde-manger', 'Épices', 'Outils'];
 export const TYPES = ['Souper', 'Soupe', 'Accompagnement', 'Déjeuner', 'Dessert', 'Collation', 'Base & sauce'];
 export const PROTS = ['Bœuf', 'Porc', 'Poulet', 'Veau', 'Poisson & fruits de mer', 'Végé', 'Œufs'];

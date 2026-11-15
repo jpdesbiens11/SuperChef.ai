@@ -133,8 +133,9 @@ test('D-G-048 : « Partager en PDF » se voit dans la Semaine, le Livre, Au poê
   await page.locator('#sheet [data-close]').first().click();
   // Le Livre : une icône sur chaque ligne.
   await ouvre(page.getByRole('button', { name: 'Partager Poulet au citron test en PDF' }), 'Poulet au citron test');
-  // La Semaine : un bouton PDF sur chaque souper.
+  // La Semaine : un bouton PDF sur chaque souper (vue détaillée ; la vue compacte du téléphone le garde dans la fiche, D-G-061).
   await page.locator('[data-go="semaine"]').click();
+  if (await page.locator('#semvue', { hasText: 'Détails' }).count()) await page.locator('#semvue').click();
   const nom = (await page.locator('.week .day[data-jour="0"] h3').textContent()).trim();
   await ouvre(page.locator('.week .day[data-jour="0"]').getByRole('button', { name: `Partager ${nom} en PDF` }), nom);
   // Au poêle : à côté d'« Adapter ».

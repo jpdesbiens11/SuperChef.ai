@@ -1,0 +1,29 @@
+{
+  "version": "1.24.0",
+  "date": "2026-11-15",
+  "mvp": "SuperChef.ai — articles libres à l'épicerie, et une Semaine compacte au téléphone",
+  "requis": [
+    "R-07",
+    "R-10",
+    "R-11"
+  ],
+  "nouveautes": [
+    "04 Provigo : ajoute tes propres articles (« Ajouter un article ») ; ils se classent tout seuls dans le bon rayon. Plus de 220 choix préprogrammés pour le garde-manger et la maison (papier de toilette, savon à vaisselle, sacs à ordures, collations…), proposés pendant que tu tapes et dans « Choix rapides ».",
+    "Nouveaux rayons : Collations et boissons, Hygiène et santé (avec Entretien pour la maison). Un rayon choisi à la main est retenu pour la prochaine fois.",
+    "Les articles libres restent sur le téléphone d'une semaine à l'autre jusqu'à « Retirer les articles pris » ; cochés, les aliments s'ajoutent au garde-manger (pas les produits de la maison).",
+    "03 Semaine au téléphone : vue compacte, une ligne par soir (jour, nom, protéine et temps, Piger et Choisir) ; la semaine tient dans un écran. « Détails » rend les grandes cartes, et le choix est retenu.",
+    "Semaine et Provigo se mettent à jour en place : seul ce qui change bouge, le défilement reste, et le soir qui vient de changer s'allume un instant."
+  ],
+  "decisions": [
+    "D-G-060",
+    "D-G-061"
+  ],
+  "tests": {
+    "unitaires": 83,
+    "bout_en_bout": 67,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}

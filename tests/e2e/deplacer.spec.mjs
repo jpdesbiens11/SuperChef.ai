@@ -103,7 +103,7 @@ test('D-G-049 : tenir 2 s, glisser au doigt ou à la souris, enregistrer, puis r
   expect(await lignesPlan(sim)).toEqual(attendu);
 
   // Semaine approuvée : on peut encore déplacer, mais il faut réapprouver pour l'écrire.
-  await page.locator('.week .day[data-jour="0"]').scrollIntoViewIfNeeded();
+  await page.evaluate(() => scrollTo(0, 0));                                 // vue compacte : dimanche passerait sous l'en-tête collant
   const e0 = await centre(page.locator('.week .day[data-jour="0"] .dname'));
   await g.bas(e0); await page.waitForTimeout(2200);
   const e3 = await centre(caseDe(page, 3));

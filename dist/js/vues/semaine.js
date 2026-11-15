@@ -1,30 +1,76 @@
 // 03 · Semaine : plan, choix, desserts, approbation (R-07 à R-09). Repris de Gordon Rams.ai.
-import { S, $, DAYS, MOIS, dayDate, weekLabel, norm, toast, errText, render } from '../etat.js?v=1.23.2';
-import { el, ico, vider } from '../el.js?v=1.23.2';
-import { savePlan as ecrirePlan } from '../donnees.js?v=1.23.2';
-import { pickFor, setDay, setFixed, recentFor } from '../planif.js?v=1.23.2';
-import { panelHead, frameEmpty, skeleton, starRow, recipeMeta, chips, dname } from './commun.js?v=1.23.2';
+import { S, $, DAYS, MOIS, dayDate, weekLabel, norm, toast, errText, render, starsOf, starLabel } from '../etat.js?v=1.24.0';
+import { el, ico, vider } from '../el.js?v=1.24.0';
+import { savePlan as ecrirePlan } from '../donnees.js?v=1.24.0';
+import { pickFor, setDay, setFixed, recentFor } from '../planif.js?v=1.24.0';
+import { panelHead, frameEmpty, skeleton, starRow, recipeMeta, chips, dname } from './commun.js?v=1.24.0';
+
+// D-G-061 : vue compacte (une ligne par soir) par défaut au téléphone ; « Détails » rend les grandes cartes.
+const CLE_VUE = 'superchef-semaine-vue';
+export function semaineCompacte() {
+  try { const v = localStorage.getItem(CLE_VUE); if (v) return v === 'compacte'; } catch (_) { /* stockage absent */ }
+  return !!globalThis.matchMedia?.('(max-width: 620px)').matches;
+}
+export function basculerVueSemaine() {
+  try { localStorage.setItem(CLE_VUE, semaineCompacte() ? 'details' : 'compacte'); } catch (_) { /* stockage absent */ }
+  render();
+}
+// Le soir dont le souper vient de changer clignote une fois : on voit ce qui a bougé sans tout relire.
+// Deux classes en alternance (neuf0 / neuf1) : un 2e changement du même soir relance l'animation.
+let vus = null, tour = 0;
+const changes = () => {
+  const ids = DAYS.map((d, i) => (S.on[i] ? S.plan[i] || '' : null));
+  const out = new Set(vus ? ids.map((id, i) => (id !== null && vus[i] !== null && id !== vus[i] ? i : -1)).filter((i) => i >= 0) : []);
+  if (out.size) tour++;
+  vus = ids; return out;
+};
+const flash = (on) => (on ? ` neuf${tour % 2}` : '');
+const miniMeta = (r) => el('div', { class: 'mini-meta' },
+  [starsOf(r) ? starLabel(starsOf(r)) : '', r.prot, r.time ? `${Math.round(r.time)} min` : '',
+    S.fixed[S.plan.indexOf(r.id)] === r.id ? 'fixe' : '', !r.complete ? 'fiche à compléter' : '',
+    recentFor(r.id) ? 'servi il y a moins de 3 semaines' : ''].filter(Boolean).join(' · '));
+
+function jourCompact(d, i, neuf) {
+  const id = S.plan[i], r = id && S.byId[id], left = el('div', { class: 'dname' }, el('b', {}, d.slice(0, 3)), el('small', {}, String(dayDate(i).getDate())));
+  const actes = el('div', { class: 'acts' },
+    el('button', { class: 'btn icon', 'data-swap': i, 'aria-label': `Piger un autre souper le ${d}`, title: 'Piger' }, ico('shuffle')),
+    el('button', { class: 'btn icon', 'data-pick': i, 'aria-label': `Choisir le souper du ${d}`, title: 'Choisir' }, ico('fork')));
+  if (!r) return el('div', { class: `frame day mini${flash(neuf)}` }, left,
+    el('div', { class: 'mini-txt' }, el('h3', {}, id ? 'Fiche hors sélection' : 'Rien de choisi')), actes);
+  return el('div', { class: `frame day mini${flash(neuf)}`, 'data-jour': String(i) }, left,
+    el('div', { class: 'mini-txt' },
+      el('button', { class: 'title-btn', 'data-preview': r.id, 'data-day': i, 'aria-label': `Voir la recette ${r.name}` }, el('h3', {}, r.name)),
+      miniMeta(r)),
+    actes);
+}
 
 export function viewWeek() {
-  const out = [panelHead('03 · Plan de semaine', weekLabel(), 'Dimanche au mercredi par défaut ; ajoute un soir au besoin. Choisis toi-même un souper (une fois ou chaque semaine), puis pige le reste. Aucune recette des 3 dernières semaines, sauf les fixes.')];
-  out.push(el('div', { class: 'daytog', role: 'group', 'aria-label': 'Soirs à planifier' },
+  const compacte = semaineCompacte();
+  const out = [panelHead('03 · Plan de semaine', weekLabel(), compacte
+    ? 'Pige ou choisis tes soupers. Touche un souper pour sa recette, le poêle ou le PDF.'
+    : 'Dimanche au mercredi par défaut ; ajoute un soir au besoin. Choisis toi-même un souper (une fois ou chaque semaine), puis pige le reste. Aucune recette des 3 dernières semaines, sauf les fixes.')];
+  out.push(el('div', { class: `daytog${compacte ? ' serre' : ''}`, role: 'group', 'aria-label': 'Soirs à planifier' },
     DAYS.map((d, i) => el('button', { class: 'btn', 'data-dtog': i, 'aria-pressed': String(S.on[i]) }, ico(S.on[i] ? 'check' : 'plus'), d.slice(0, 3)))));
   if (S.loading) return [...out, el('div', { class: 'week' }, DAYS.filter((d, i) => S.on[i]).map(() => skeleton()))];
   const soupers = S.plan.filter((id, i) => S.on[i] && id && S.byId[id]).length;
-  if (S.recipes.length && soupers >= 1) out.push(el('p', { class: 'hint dp-astuce', 'data-new': '1.18.0-deplacer' }, 'Astuce : tiens un souper 2 secondes pour le glisser vers un autre soir.'));
   if (!S.recipes.length) return [...out, frameEmpty('Aucun souper Au livre ou À trier dans le classeur pour l\'instant. Importe tes recettes depuis le bouton Compte, en haut.')];
-  out.push(el('div', { class: 'week' }, DAYS.map((d, i) => {
+  out.push(el('div', { class: 'sem-outils' },
+    S.recipes.length && soupers >= 1 ? el('p', { class: 'hint dp-astuce', 'data-new': '1.18.0-deplacer' }, compacte ? 'Astuce : tiens un souper 2 secondes pour le glisser.' : 'Astuce : tiens un souper 2 secondes pour le glisser vers un autre soir.') : el('span'),
+    el('button', { class: 'btn vue-btn', id: 'semvue', 'aria-pressed': String(!compacte), 'data-new': '1.24.0-compacte' }, compacte ? 'Détails' : 'Compacte')));
+  const neufs = changes();
+  if (compacte) out.push(el('div', { class: 'week compacte' }, DAYS.map((d, i) => (S.on[i] ? jourCompact(d, i, neufs.has(i)) : null))));
+  else out.push(el('div', { class: 'week' }, DAYS.map((d, i) => {
     if (!S.on[i]) return null;
-    const id = S.plan[i], r = id && S.byId[id], left = dname(d, dayDate(i), MOIS);
+    const id = S.plan[i], r = id && S.byId[id], left = dname(d, dayDate(i), MOIS), cl = `frame day${flash(neufs.has(i))}`;
     if (!r) {
-      return el('div', { class: 'frame day' }, left,
+      return el('div', { class: cl }, left,
         el('div', {}, el('h3', {}, id ? 'Fiche hors sélection' : 'Rien de choisi'), el('div', { class: 'meta' }, el('span', {}, id ? 'Cette recette n\'est plus Au livre ni À trier.' : 'Plus de candidats disponibles.'))),
         el('div', { class: 'acts' }, el('button', { class: 'btn', 'data-pick': i }, ico('fork'), 'Choisir'),
           el('button', { class: 'btn icon', 'data-swap': i, 'aria-label': `Piger le souper du ${d}` }, ico('shuffle'))));
     }
     const pinTag = S.fixed[i] === r.id ? el('span', { class: 'chip acc' }, ico('check'), `Chaque ${d.toLowerCase()}`)
       : S.pins.has(i) ? el('span', { class: 'chip acc' }, ico('check'), 'Choisi par toi') : null;
-    return el('div', { class: 'frame day', 'data-jour': String(i) }, left,
+    return el('div', { class: cl, 'data-jour': String(i) }, left,
       el('div', { style: 'min-width:0' },
         el('button', { class: 'title-btn', 'data-preview': r.id, 'data-day': i, 'aria-label': `Voir la recette ${r.name}` }, el('h3', {}, r.name), el('span', { class: 'peek' }, ico('right'), 'Voir la recette')),
         starRow(r), recipeMeta(r), pinTag && el('div', { class: 'chips' }, pinTag), chips(r)),
@@ -36,9 +82,14 @@ export function viewWeek() {
   })));
   out.push(el('div', { class: 'dess-head' }, el('h3', { class: 'label' }, 'Desserts de la semaine'),
     el('button', { class: 'btn', id: 'adddess' }, ico('plus'), `Dessert (${(S.desserts || []).length})`)));
-  out.push((S.dess || []).length ? el('div', { class: 'week' }, S.dess.map((x) => {
+  out.push((S.dess || []).length ? el('div', { class: `week${compacte ? ' compacte' : ''}` }, S.dess.map((x) => {
     const r = S.byId[x.id], left = dname(DAYS[x.day], dayDate(x.day), MOIS);
-    if (!r) return el('div', { class: 'frame day dess' }, left, el('div', {}, el('h3', {}, 'Dessert introuvable')), el('div', { class: 'acts' }, el('button', { class: 'btn', 'data-ddel': x.id }, 'Retirer')));
+    if (!r) return el('div', { class: `frame day dess${compacte ? ' mini' : ''}` }, left, el('div', {}, el('h3', {}, 'Dessert introuvable')), el('div', { class: 'acts' }, el('button', { class: 'btn', 'data-ddel': x.id }, 'Retirer')));
+    if (compacte) return el('div', { class: 'frame day dess mini' }, left,
+      el('div', { class: 'mini-txt' },
+        el('button', { class: 'title-btn', 'data-preview': r.id, 'aria-label': `Voir la recette ${r.name}` }, el('h3', {}, r.name)),
+        el('div', { class: 'mini-meta' }, ['Dessert', r.time ? `${Math.round(r.time)} min` : ''].filter(Boolean).join(' · '))),
+      el('div', { class: 'acts' }, el('button', { class: 'btn icon', 'data-ddel': r.id, 'aria-label': `Retirer ${r.name}`, title: 'Retirer' }, '×')));
     return el('div', { class: 'frame day dess' }, left,
       el('div', { style: 'min-width:0' },
         el('button', { class: 'title-btn', 'data-preview': r.id, 'aria-label': `Voir la recette ${r.name}` }, el('h3', {}, r.name), el('span', { class: 'peek' }, ico('right'), 'Voir la recette')),
@@ -47,13 +98,13 @@ export function viewWeek() {
       el('div', { class: 'acts' }, el('button', { class: 'btn', 'data-ddel': r.id, 'aria-label': `Retirer ${r.name}` }, 'Retirer'),
         el('button', { class: 'btn', 'data-cook': r.id, disabled: !r.complete }, ico('flame'), 'Au poêle')));
   })) : el('p', { class: 'hint', style: 'margin:0 0 8px' }, 'Aucun dessert prévu. Touche « Dessert » pour voir tous les desserts du livre.'));
-  out.push(el('div', { class: 'week-foot' },
+  out.push(el('div', { class: `week-foot${compacte ? ' compacte' : ''}` },
     el('button', { class: 'btn primary', id: 'save', disabled: S.saving || S.saved }, ico('save'), S.saving ? 'Enregistrement…' : S.saved ? 'Semaine approuvée' : 'Approuver la semaine'),
-    el('button', { class: 'btn', id: 'redraw' }, ico('dice'), S.pins.size ? 'Piger le reste' : 'Piger une autre semaine'),
+    el('button', { class: 'btn', id: 'redraw' }, ico('dice'), S.pins.size ? 'Piger le reste' : (compacte ? 'Tout repiger' : 'Piger une autre semaine')),
     soupers >= 1 && el('button', { class: 'btn', id: 'deplacer-btn', 'data-new': '1.18.0-deplacer' }, ico('move'), 'Déplacer'),
     el('span', { class: 'status' }, S.saved && S.planRows.length ? 'Synchronisée avec ton classeur.' : S.saved ? ''
       : S.planRows.some((x) => x['Recette id']) ? 'Modifiée : approuve de nouveau la semaine pour l\'enregistrer dans ton classeur.' : 'Brouillon : touche un souper pour voir la recette, puis approuve.')));
-  out.push(el('p', { class: 'label', style: 'margin-top:22px' }, 'Le frigo et l\'inventaire entreront dans le choix quand l\'écran Livre sera livré.'));
+  if (!compacte) out.push(el('p', { class: 'label', style: 'margin-top:22px' }, 'Le frigo et l\'inventaire entreront dans le choix quand l\'écran Livre sera livré.'));
   return out;
 }
 
