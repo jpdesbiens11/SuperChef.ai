@@ -3,8 +3,9 @@
 // Chaque ligne a un id stable ; les plans et bilans pointent vers cet id.
 // Version 2 (1.1.0) : colonnes reprises de Notion ajoutées à la fin de chaque onglet.
 // Version 3 (1.8.0) : « Originale » et « Adaptations » à la fin de Recettes (D-G-033).
+// Version 4 (1.25.0) : onglet « Épicerie » (articles libres, cases cochées, rayons appris : D-G-062).
 
-export const VERSION_SCHEMA = 3;
+export const VERSION_SCHEMA = 4;
 
 export const ONGLETS = Object.freeze([
   {
@@ -35,6 +36,11 @@ export const ONGLETS = Object.freeze([
     colonnes: ['id', 'Date', 'Recette id', 'Note /10', 'Commentaire',
       // v2
       'Titre', 'Étoiles', 'Facilité /10', 'Restes', 'Temps prévu (min)', 'Temps réel (min)']
+  },
+  {
+    // D-G-062 : Genre « libre » (article ajouté à la main), « coche » (ingrédient de la semaine coché), « rayon » (rayon appris).
+    titre: 'Épicerie',
+    colonnes: ['id', 'Genre', 'Semaine du', 'Nom', 'Rayon', 'Pris', 'Clé', 'Modifié le']
   },
   {
     titre: 'Schéma',

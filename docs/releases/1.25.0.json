@@ -1,0 +1,28 @@
+{
+  "version": "1.25.0",
+  "date": "2026-11-15",
+  "mvp": "SuperChef.ai — la liste d'épicerie dans ton classeur Google, la même au PC et au téléphone",
+  "requis": [
+    "R-06",
+    "R-10",
+    "R-11"
+  ],
+  "nouveautes": [
+    "La liste du Provigo est enregistrée dans ton classeur Google (nouvel onglet « Épicerie ») : articles ajoutés à la main, cases cochées de la semaine et rayons choisis. Le PC et le téléphone voient la même liste, et rien ne se perd au rechargement.",
+    "La liste se relit toute seule quand tu ouvres Provigo ou le garde-manger, ou quand tu reviens dans l'app : un ajout fait au PC apparaît au téléphone.",
+    "Ce que le téléphone gardait (1.24.0) passe dans le classeur à la première ouverture.",
+    "Un article ajouté à la main est aussi gardé au garde-manger (à 0 s'il faut l'acheter). Nouvelle zone « Maison » pour l'entretien et l'hygiène.",
+    "Garde-manger : « + Épicerie » sur chaque article le remet sur la liste du Provigo en un toucher. Dans Provigo, « À racheter » propose les articles épuisés du garde-manger."
+  ],
+  "decisions": [
+    "D-G-062"
+  ],
+  "tests": {
+    "unitaires": 83,
+    "bout_en_bout": 69,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}

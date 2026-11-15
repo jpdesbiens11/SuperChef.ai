@@ -26,7 +26,8 @@ test('P-4 : un classeur v1 passe en v2 en ajoutant des colonnes à la fin seulem
   const c = sim.classeurs.get(id);
   for (const o of ONGLETS) {
     assert.deepEqual(c.onglets[o.titre][0], o.colonnes, o.titre);
-    assert.deepEqual(c.onglets[o.titre][0].slice(0, V1[o.titre].length), V1[o.titre], `${o.titre} : préfixe v1 intact`);
+    if (V1[o.titre]) assert.deepEqual(c.onglets[o.titre][0].slice(0, V1[o.titre].length), V1[o.titre], `${o.titre} : préfixe v1 intact`);
+    else assert.equal(c.onglets[o.titre].length, 1, `${o.titre} : onglet ajouté, titres seulement (D-G-062)`);
   }
   assert.deepEqual(c.onglets.Recettes[1].slice(0, 3), ['r-1', 'Pâté chinois', 'Souper']);
   assert.deepEqual(c.onglets['Schéma'][1], ['version_schema', String(VERSION_SCHEMA)]);

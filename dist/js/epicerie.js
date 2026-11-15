@@ -1,15 +1,12 @@
 // D-G-060 : articles libres de l'épicerie (garde-manger et consommables de la maison), classés par rayon tout seuls.
 // Le catalogue est une liste de choix préprogrammés (article → rayon) ; un nom qui n'y est pas passe par des règles
 // « maison » (savon, papier…), puis par les rayons des ingrédients (cuisine.js). Un rayon choisi à la main est retenu
-// sur l'appareil pour la prochaine fois. Sans DOM : testé à part.
-import { norm } from './etat.js?v=1.24.0';
-import { deptOf } from './cuisine.js?v=1.24.0';
+// dans le classeur pour la prochaine fois (D-G-062). Sans DOM : testé à part.
+import { norm } from './etat.js?v=1.25.0';
+import { deptOf } from './cuisine.js?v=1.25.0';
 
 const FL = 'Fruits et légumes', BOU = 'Boulangerie', LAI = 'Produits laitiers et œufs', SEC = 'Épicerie sèche', CON = 'Conserves',
   EPI = 'Épices', COL = 'Collations et boissons', SUR = 'Surgelés', HYG = 'Hygiène et santé', ENT = 'Entretien', VIA = 'Viandes', CHA = 'Charcuterie et fromages';
-
-// Rayons qui ne vont pas au garde-manger quand on les coche (on ne compte pas le papier de toilette).
-export const HORS_INVENTAIRE = new Set([HYG, ENT]);
 
 const groupe = (rayon, noms) => noms.map((nom) => [nom, rayon]);
 export const CATALOGUE = [

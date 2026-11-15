@@ -1,8 +1,8 @@
 // Bibliothèque SuperChef.ai dans le Drive de la personne (R-01).
 // Trouve le dossier et le classeur créés par l'app, ou les crée.
 
-import { TYPE_DOSSIER, TYPE_CLASSEUR } from './drive.js?v=1.24.0';
-import { ONGLETS, SOUS_DOSSIERS, VERSION_SCHEMA, plageEntete, colonnesManquantes, onglet, lettre } from './schema.js?v=1.24.0';
+import { TYPE_DOSSIER, TYPE_CLASSEUR } from './drive.js?v=1.25.0';
+import { ONGLETS, SOUS_DOSSIERS, VERSION_SCHEMA, plageEntete, colonnesManquantes, onglet, lettre } from './schema.js?v=1.25.0';
 
 export async function ouvrirOuCreer(drive, { nomDossier, nomClasseur, version }, etape = () => {}) {
   etape('recherche');
@@ -90,7 +90,7 @@ export async function migrerSchema(drive, id) {
   return { avant, apres: VERSION_SCHEMA, ajouts };
 }
 
-export const ONGLETS_DONNEES = Object.freeze(['Recettes', 'Plans de semaine', 'Inventaire', 'Bilans']);
+export const ONGLETS_DONNEES = Object.freeze(['Recettes', 'Plans de semaine', 'Inventaire', 'Bilans', 'Épicerie']);
 
 // D-G-042 : prépare ou répare la ligne de titres des onglets de données avant d'écrire.
 // - onglet absent : recréé avec ses titres ; 1re ligne vide : titres remis ;

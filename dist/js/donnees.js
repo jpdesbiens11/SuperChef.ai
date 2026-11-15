@@ -1,10 +1,10 @@
 // Couche de données : le classeur Google remplace les bases Notion de Gordon Rams.ai.
 // Toutes les écritures passent par ecrireParId (N-07) ou ajouterUn.
-import { S, DAYS, BASE_DAYS, GAP_DAYS, iso, weekLabel } from './etat.js?v=1.24.0';
-import { lireOnglets, lireOnglet, ecrireParId, ajouterUn, supprimerParId } from './store.js?v=1.24.0';
-import { ficheDeLigne } from './cuisine.js?v=1.24.0';
+import { S, DAYS, BASE_DAYS, GAP_DAYS, iso, weekLabel } from './etat.js?v=1.25.0';
+import { lireOnglets, lireOnglet, ecrireParId, ajouterUn, supprimerParId } from './store.js?v=1.25.0';
+import { ficheDeLigne } from './cuisine.js?v=1.25.0';
 
-const T_REC = 'Recettes', T_PLAN = 'Plans de semaine', T_INV = 'Inventaire', T_BIL = 'Bilans';
+const T_REC = 'Recettes', T_PLAN = 'Plans de semaine', T_INV = 'Inventaire', T_BIL = 'Bilans', T_EPI = 'Épicerie';
 const oui = (v) => /^(oui|true|vrai|1|__yes__)$/i.test(String(v || '').trim());
 const nb = (v) => { const n = Number(String(v ?? '').replace(',', '.')); return v === '' || v == null || Number.isNaN(n) ? null : n; };
 const liste = (v) => String(v || '').split(/[,\n]/).map((x) => x.trim()).filter(Boolean);
@@ -36,7 +36,8 @@ export function rebuildPools() {
 
 // Une lecture groupée au démarrage : recettes, plans, inventaire.
 export async function chargerTout() {
-  const t = await lireOnglets(ctx().drive, ctx().classeurId, [T_REC, T_PLAN, T_INV]);
+  const t = await lireOnglets(ctx().drive, ctx().classeurId, [T_REC, T_PLAN, T_INV, T_EPI]);
+  S.prov.rows = t[T_EPI].filter((r) => r.id);                  // D-G-062 : liste d'épicerie dans le classeur
   // D-G-042 : une recette écrite deux fois (titres effacés pendant un ajout) n'est montrée qu'une fois.
   const vus = new Set();
   S.book = t[T_REC].filter((r) => r.id && !vus.has(r.id) && vus.add(r.id)).map(toRecipe);
@@ -155,6 +156,20 @@ export async function remettreArticle(row) {
 export async function fusionnerArticles(garde, double) {
   await majArticle(garde, { 'Quantité': Math.round((garde.qty + double.qty) * 10) / 10, ...(double.essential && !garde.essential ? { Essentiel: true } : {}) });
   await supprimerArticle(double);
+}
+
+/* ---------- épicerie (D-G-062) : articles libres, cases cochées, rayons appris ---------- */
+export async function relireEpicerie() {
+  const t = await lireOnglets(ctx().drive, ctx().classeurId, [T_EPI, T_INV]);  // l'autre appareil a pu changer les deux
+  S.prov.rows = t[T_EPI].filter((r) => r.id);
+  S.inv.items = t[T_INV].filter((r) => r.id).map(toItem).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+}
+export async function ajouterLigneEpi(obj) { const row = await ajout(T_EPI, obj); S.prov.rows.push(row); return row; }
+export const majLigneEpi = (row, valeurs) => ecrire(T_EPI, row, valeurs);
+export async function supprimerLigneEpi(row) {
+  const ligne = await supprimerParId(ctx().drive, ctx().classeurId, T_EPI, row);
+  S.prov.rows = S.prov.rows.filter((x) => x !== row);
+  for (const x of S.prov.rows) if (x._ligne > ligne) x._ligne -= 1;
 }
 
 /* ---------- bilans ---------- */

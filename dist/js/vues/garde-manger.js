@@ -1,12 +1,13 @@
 // 02 · Garde-manger (R-06). Repris de Gordon Rams.ai.
 // D-G-043 : filtres (recherche, zone, état) et mode « Modifier » (nom, zone, rayon, essentiel, supprimer,
 // fusionner les doublons probables). Tout s'écrit dans l'onglet Inventaire du classeur.
-import { S, $, ZONES, DEPTS, norm, toast, errText, render } from '../etat.js?v=1.24.0';
-import { el, ico } from '../el.js?v=1.24.0';
-import { majQuantite, ajouterArticle, majArticle, supprimerArticle, remettreArticle, fusionnerArticles } from '../donnees.js?v=1.24.0';
-import { deptOf, zoneOf } from '../cuisine.js?v=1.24.0';
-import { couvre } from '../stock.js?v=1.24.0';
-import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.24.0';
+import { S, $, ZONES, DEPTS, norm, toast, errText, render } from '../etat.js?v=1.25.0';
+import { el, ico } from '../el.js?v=1.25.0';
+import { majQuantite, ajouterArticle, majArticle, supprimerArticle, remettreArticle, fusionnerArticles } from '../donnees.js?v=1.25.0';
+import { deptOf, zoneOf } from '../cuisine.js?v=1.25.0';
+import { couvre } from '../stock.js?v=1.25.0';
+import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.25.0';
+import { cleRayon } from '../epicerie.js?v=1.25.0';
 
 const ETATS = [['tous', 'Tous'], ['stock', 'En stock'], ['epuises', 'Épuisés'], ['essentiels', 'Essentiels']];
 const F = () => (S.inv.f ||= { q: '', zone: '', etat: 'tous', edit: false });
@@ -32,9 +33,13 @@ function filtres(n, total) {
     el('p', { class: 'label' }, n === total ? `${total} article${total > 1 ? 's' : ''}` : `${n} sur ${total} articles`));
 }
 
-function ligneNormale(i) {
+// D-G-062 : « Épicerie » met l'article sur la liste du Provigo (ou l'en retire) ; ce qui revient souvent se rachète en un toucher.
+const surListe = () => new Set((S.prov.libres || []).filter((a) => !a.pris).map((a) => cleRayon(a.nom)));
+function ligneNormale(i, liste = surListe()) {
+  const dessus = liste.has(cleRayon(i.name));
   return el('div', { class: `inv-row ${i.qty > 0 || i.essential ? '' : 'zero'}` },
-    el('div', { class: 'nm' }, i.name, i.essential && [' ', el('span', { class: 'chip acc' }, 'Essentiel')], i.dept && el('small', {}, i.dept + (i.unit ? ' · ' + i.unit : ''))),
+    el('div', { class: 'nm' }, i.name, i.essential && [' ', el('span', { class: 'chip acc' }, 'Essentiel')], i.dept && el('small', {}, i.dept + (i.unit ? ' · ' + i.unit : '')),
+      el('button', { class: 'btn epi-btn', 'data-invepi': i.id, 'aria-pressed': String(dessus), 'aria-label': dessus ? `Retirer ${i.name} de l'épicerie` : `Mettre ${i.name} sur la liste d'épicerie`, title: dessus ? 'Sur la liste du Provigo' : 'Ajouter à la liste du Provigo' }, dessus ? '✓ Sur la liste d\'épicerie' : '+ Épicerie')),
     el('div', { class: 'qty' },
       el('button', { class: 'btn icon', 'data-qty': i.id, 'data-d': '-1', 'aria-label': `Retirer un ${i.name}` }, '−'), el('b', {}, String(i.qty)),
       el('button', { class: 'btn icon', 'data-qty': i.id, 'data-d': '1', 'aria-label': `Ajouter un ${i.name}` }, '+')));
@@ -54,7 +59,7 @@ function ligneEdition(i) {
 }
 
 export function viewInv() {
-  const out = [panelHead('02 · Garde-manger', 'Garde-manger', 'Frigo, garde-manger, épices et outils. L\'épicerie cochée s\'ajoute, les soupers cuisinés se retirent.'),
+  const out = [panelHead('02 · Garde-manger', 'Garde-manger', 'Frigo, garde-manger, épices, maison et outils. L\'épicerie cochée s\'ajoute, les soupers cuisinés se retirent ; « + Épicerie » remet un article sur la liste du Provigo.'),
     el('form', { class: 'frame add-form', id: 'addinv' },
       el('input', { id: 'inv-name', placeholder: 'Ajouter un article (ex. lait 2 %)', 'aria-label': 'Article', autocomplete: 'off' }),
       el('select', { id: 'inv-zone', 'aria-label': 'Zone' }, el('option', { value: '' }, 'Zone auto'), ZONES.map((z) => el('option', {}, z))),
@@ -65,9 +70,10 @@ export function viewInv() {
   const vus = S.inv.items.filter(garder), f = F();
   out.push(filtres(vus.length, S.inv.items.length));
   if (!vus.length) return [...out, frameEmpty('Aucun article ne correspond à ces filtres.')];
+  const liste = surListe();
   return [...out, ...ZONES.map((z) => {
     const its = vus.filter((i) => i.zone === z); if (!its.length) return null;
-    return el('div', { class: 'zone' }, el('h3', {}, z, el('small', {}, `${its.filter((i) => i.qty > 0).length} en stock`)), its.map(f.edit ? ligneEdition : ligneNormale));
+    return el('div', { class: 'zone' }, el('h3', {}, z, el('small', {}, `${its.filter((i) => i.qty > 0).length} en stock`)), its.map(f.edit ? ligneEdition : (i) => ligneNormale(i, liste)));
   })];
 }
 

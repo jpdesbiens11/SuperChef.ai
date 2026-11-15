@@ -1,5 +1,5 @@
 // Lecture des fiches : ingrédients, étapes, minuteurs, rayons Provigo. Repris de Gordon Rams.ai.
-import { norm, S } from './etat.js?v=1.24.0';
+import { norm, S } from './etat.js?v=1.25.0';
 
 const STOP = new Set('avec dans pour plus sans tasse tasses cuillere cuilleres soupe environ facultatif hache hachee hachees haches finement coupe coupee coupees coupes cubes tranche tranches gousse gousses grosse gros petit petite moyen moyenne boite pelees pelee goutt bien chaud froid frais fraiche litre litres paquet morceaux reserve rincee rinces egoutte preparee preparees prepare prepares'.split(' '));
 // D-G-050 : seul le nom compte (avant la virgule : « 4 gousses d'ail, coupées en deux » -> ail, pas « deux ») ;
@@ -224,7 +224,7 @@ const DEPT_RULES = [
   ['Fruits et légumes', /oignon|\bail\b|carotte|celeri|poivron|tomate|laitue|romaine|epinard|brocoli|champignon|portobello|patate|pomme de terre|citron|lime|coriandre|persil|basilic|gingembre|concombre|radis|avocat|courgette|aubergine|\bchou\b|echalote|aneth|thym|citronnelle|\bmais\b|asperge|orange|pomme|jalapeno|piment|menthe|ciboulette|navet|panais|courge|haricots verts|pois mange|germes|fines herbes|bok choy|poireau/]
 ];
 export function deptOf(text) { const s = norm(text).replace(/\(.*?\)/g, ' ').split(/,(?!\d)/)[0].replace(/[’']/g, ' '); for (const [d, re] of DEPT_RULES) if (re.test(s)) return d; return 'Épicerie sèche'; }
-export function zoneOf(dept) { return dept === 'Épices' ? 'Épices' : dept === 'Surgelés' ? 'Congélateur' : ['Viandes', 'Poissonnerie', 'Charcuterie et fromages', 'Produits laitiers et œufs', 'Fruits et légumes'].includes(dept) ? 'Frigo' : 'Garde-manger'; }
+export function zoneOf(dept) { return dept === 'Épices' ? 'Épices' : dept === 'Hygiène et santé' || dept === 'Entretien' ? 'Maison' : dept === 'Surgelés' ? 'Congélateur' : ['Viandes', 'Poissonnerie', 'Charcuterie et fromages', 'Produits laitiers et œufs', 'Fruits et légumes'].includes(dept) ? 'Frigo' : 'Garde-manger'; }
 const SIG_STOP = new Set(['de', 'des', 'du', 'les', 'aux', 'avec', 'pour', 'une', 'ordinaire']);
 const QUALIFIERS = ['coco', 'arachide', 'amande', 'avoine', 'soya', 'sure', 'sesame', 'erable', 'poisson', 'chili', 'tomate', 'worcestershire', 'balsamique', 'cidre', 'riz', 'olive', 'canola', 'fume', 'moulue', 'broyee', 'fromage', 'dijon', 'condense', 'poulet', 'boeuf', 'legume'];
 const sig = (s) => norm(s).replace(/\(.*?\)/g, ' ').replace(/[’']/g, ' ').replace(/[^a-z ]/g, ' ').split(/\s+/).filter((w) => w.length >= 3 && !SIG_STOP.has(w)).map((w) => w.replace(/[sx]$/, ''));
