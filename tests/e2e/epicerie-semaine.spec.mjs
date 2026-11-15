@@ -31,7 +31,10 @@ test('Provigo : articles libres classés par rayon, gardés dans le classeur et 
   await expect(page.locator('#epi-nom')).toHaveValue('');
   await expect(page.locator('#epi-nom')).toBeFocused();                   // on enchaîne les ajouts
   // D-G-062 : écrit dans l'onglet Épicerie, et gardé au garde-manger (zone Maison, quantité 0 : à acheter).
-  await expect.poll(() => epicerie(sim).map((r) => [r.Genre, r.Nom, r.Rayon, r.Pris])).toEqual([['libre', 'Papier toilette', 'Hygiène et santé', 'non']]);
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'libre').map((r) => [r.Nom, r.Rayon, r.Pris])).toEqual([['Papier toilette', 'Hygiène et santé', 'non']]);
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'memo').map((r) => [r.Nom, r.Fois])).toEqual([['Papier toilette', '1']]);   // D-G-063 : en mémoire
+  // D-G-063 : « Mes articles » vient après les ingrédients des recettes.
+  expect(await page.evaluate(() => { const d = document.querySelector('#main > .dept'), m = document.querySelector('.epi-libre'); return !!(d && m && (d.compareDocumentPosition(m) & Node.DOCUMENT_POSITION_FOLLOWING)); })).toBe(true);
   await expect.poll(() => inventaire(sim).filter((r) => r.Nom === 'Papier toilette').map((r) => [r.Zone, r['Quantité']])).toEqual([['Maison', '0']]);
   // Doublon refusé.
   await page.locator('#epi-nom').fill('Papier Toilette');
@@ -86,6 +89,17 @@ test('Provigo : articles libres classés par rayon, gardés dans le classeur et 
   await page.locator('#epi-vider').click();
   await expect(page.locator('.glrow.libre', { hasText: 'Papier toilette' })).toHaveCount(0);
   await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'libre').map((r) => r.Nom)).toEqual(['Kombucha maison', 'Piles AA']);
+  // Retiré de la liste, gardé en mémoire : il revient en tapant.
+  expect(epicerie(sim).filter((r) => r.Genre === 'memo').map((r) => r.Nom)).toContain('Papier toilette');
+  await page.locator('#epi-nom').pressSequentially('papier t');
+  await expect(page.locator('#epi-sugg .sugg-choix').first()).toContainText('Papier toilette');
+  await expect(page.locator('#epi-sugg .sugg-choix').first()).toContainText('ajouté 1 fois');
+  await page.locator('#epi-sugg .sugg-choix').first().click();
+  await expect(page.locator('.epi-libre .glrow.libre', { hasText: 'Papier toilette' })).toHaveCount(1);
+  await expect(page.locator('#epi-nom')).toHaveValue('');
+  await expect(page.locator('#epi-sugg .sugg')).toHaveCount(0);
+  await expect.poll(() => epicerie(sim).find((r) => r.Genre === 'memo' && r.Nom === 'Papier toilette')?.Fois).toBe('2');
+  await page.locator('.glrow.libre', { hasText: 'Papier toilette' }).locator('[data-epidel]').click();
 
   // Garde-manger : l'article ajouté à la main y est, et revient sur la liste en un toucher.
   await page.locator('[data-go="livre"]').click();
@@ -103,10 +117,41 @@ test('Provigo : articles libres classés par rayon, gardés dans le classeur et 
 test('D-G-062 : la liste gardée dans le téléphone (1.24.0) passe dans le classeur', async ({ page }) => {
   await page.addInitScript(() => { if (!sessionStorage.getItem('fait')) { sessionStorage.setItem('fait', '1'); localStorage.setItem('superchef-epicerie-libre', JSON.stringify([{ id: 'x-1', nom: 'Essuie-tout', rayon: 'Entretien', pris: false }])); } });
   const { sim, erreurs } = await demarrer(page);
-  await expect.poll(() => epicerie(sim).map((r) => [r.Genre, r.Nom, r.Rayon])).toEqual([['libre', 'Essuie-tout', 'Entretien']]);
+  await expect.poll(() => epicerie(sim).map((r) => [r.Genre, r.Nom, r.Rayon])).toEqual([['libre', 'Essuie-tout', 'Entretien'], ['memo', 'Essuie-tout', 'Entretien']]);
   expect(await page.evaluate(() => localStorage.getItem('superchef-epicerie-libre'))).toBeNull();
   await page.locator('[data-go="provigo"]').click();
   await expect(page.locator('.glrow.libre')).toHaveText([/Essuie-tout/]);
+  expect(erreurs).toEqual([]);
+});
+
+test('D-G-063 : marques au catalogue, mémoire rappelée en tapant, « Enregistrer toute la liste dans Google Drive »', async ({ page }) => {
+  const { sim, erreurs } = await demarrer(page);
+  await page.locator('[data-go="provigo"]').click();
+  await expect(page.locator('#epi-drive')).toHaveText(/Enregistrer toute la liste dans Google Drive/);
+  // Une marque du catalogue : quelques lettres suffisent.
+  await page.locator('#epi-nom').pressSequentially('sens rep');
+  await expect(page.locator('#epi-sugg .sugg-choix').first()).toContainText('Pâte à dents Sensodyne Répare et protège');
+  await page.locator('#epi-sugg .sugg-choix').first().click();
+  await expect(page.locator('.dept', { hasText: 'Hygiène et santé' }).locator('.glrow.libre')).toHaveText(/Sensodyne/);
+  // Un nom tapé à la main, hors catalogue : rangé (déodorant → Hygiène) et rappelé ensuite, avant le catalogue.
+  await page.locator('#epi-nom').fill('Déodorant Old Spice Fiji');
+  await page.locator('#epi-nom').press('Enter');
+  await expect(page.locator('.dept', { hasText: 'Hygiène et santé' }).locator('.glrow.libre')).toHaveCount(2);
+  await page.locator('.glrow.libre', { hasText: 'Fiji' }).locator('[data-epidel]').click();
+  await page.locator('#epi-nom').pressSequentially('deo');
+  await expect(page.locator('#epi-sugg .sugg-choix').first()).toContainText('Déodorant Old Spice Fiji');
+  // Oublier un article de la mémoire.
+  await page.locator('#epi-sugg [data-epioubli]').first().click();
+  await expect(page.locator('#epi-sugg .sugg-choix').first()).not.toContainText('ajouté');   // reste proposé : il est au garde-manger
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'memo').map((r) => r.Nom)).toEqual(['Pâte à dents Sensodyne Répare et protège']);
+  await page.locator('#epi-nom').fill('');
+  // Le bouton : approuve la semaine (pas encore approuvée) et confirme dans le classeur.
+  await expect(page.locator('.epi-etat')).toContainText('Semaine pas encore approuvée');
+  await page.locator('#epi-drive').click();
+  await expect(page.locator('#toast')).toContainText('Liste enregistrée dans Google Drive');
+  await expect(page.locator('.epi-etat')).toContainText('Tout est dans Google Drive');
+  expect([...sim.classeurs.values()][0].onglets['Plans de semaine'].length).toBeGreaterThan(1);
+  await expect(page.locator('#prov-approuver')).toHaveCount(0);
   expect(erreurs).toEqual([]);
 });
 

@@ -1,0 +1,26 @@
+{
+  "version": "1.26.0",
+  "date": "2026-11-15",
+  "mvp": "SuperChef.ai — « Mes articles » sous les recettes, mémoire de tout ce que tu ajoutes, rappelé en tapant",
+  "requis": [
+    "R-10",
+    "R-11"
+  ],
+  "nouveautes": [
+    "04 Provigo : la section « Mes articles » passe sous les ingrédients des recettes, avec en tête « Enregistrer toute la liste dans Google Drive » et l'état de l'enregistrement. Le bouton approuve aussi la semaine si elle ne l'est pas : la même liste partout.",
+    "Mémoire : tout article ajouté à la main est noté dans ton classeur Google (avec le nombre de fois), même retiré de la liste. En tapant quelques lettres, il revient en suggestion, les plus fréquents d'abord, puis le garde-manger, puis le catalogue. « × » l'oublie.",
+    "« Tes articles habituels » : tes ajouts fréquents, à remettre sur la liste en un toucher.",
+    "Catalogue : plus de 400 articles, dont des marques qu'on rachète souvent (Déodorant Old Spice, Pâte à dents Sensodyne Répare et protège, Tide, Cascade, Cashmere, Kraft Dinner…). « sens rep » suffit pour trouver la Sensodyne."
+  ],
+  "decisions": [
+    "D-G-063"
+  ],
+  "tests": {
+    "unitaires": 85,
+    "bout_en_bout": 71,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}
