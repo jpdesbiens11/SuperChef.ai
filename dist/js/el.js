@@ -7,7 +7,7 @@ export function el(tag, attrs = {}, ...enfants) {
   const n = document.createElement(tag);
   for (const [cle, val] of Object.entries(attrs || {})) {
     if (val === undefined || val === null || val === false) continue;
-    if (cle.startsWith('on') && typeof val === 'function') n.addEventListener(cle.slice(2), val);
+    if (cle.startsWith('on') && typeof val === 'function') { n.addEventListener(cle.slice(2), val); n.ecoute = true; }
     else if (cle === 'class') n.className = val;
     else if (cle === 'style') n.style.cssText = val;          // CSSOM : permis par la CSP
     else if (cle === 'value' && 'value' in n) n.value = val;
@@ -24,6 +24,42 @@ export function ajouter(n, enfants) {
     n.append(e instanceof Node ? e : document.createTextNode(String(e)));
   }
   return n;
+}
+
+// D-G-061 : mise à jour en place (Semaine, Provigo). Au lieu de tout vider puis tout reconstruire, on garde les
+// nœuds déjà là et on ne touche qu'aux attributs, textes et cases qui ont changé : rien ne clignote, le défilement,
+// le focus et un <details> ouvert restent. Un nœud avec un écouteur (onclick d'el()) est remplacé, jamais réutilisé.
+export function patcher(parent, enfants) {
+  const neuf = ajouter(document.createDocumentFragment(), enfants);
+  patcherEnfants(parent, neuf);
+  return parent;
+}
+const PROPS = ['value', 'checked', 'disabled', 'selected'];
+const pareil = (a, b) => a.nodeType === b.nodeType && a.nodeName === b.nodeName && !a.ecoute && !b.ecoute
+  && (a.nodeType !== 1 || (a.id || '') === (b.id || ''));
+function patcherNoeud(a, b) {
+  if (a.nodeType !== 1) { if (a.nodeValue !== b.nodeValue) a.nodeValue = b.nodeValue; return; }
+  const props = PROPS.filter((p) => p in b).map((p) => [p, b[p]]);   // lus avant que b perde des enfants
+  const garderOuvert = a.nodeName === 'DETAILS';
+  // style : par le CSSOM (la CSP refuse un attribut style écrit, D-G-061), comme el().
+  if ((a.getAttribute('style') || '') !== (b.getAttribute('style') || '')) a.style.cssText = b.style.cssText;
+  for (const at of [...a.attributes]) if (at.name !== 'style' && !b.hasAttribute(at.name) && !(garderOuvert && at.name === 'open')) a.removeAttribute(at.name);
+  for (const at of [...b.attributes]) if (at.name !== 'style' && a.getAttribute(at.name) !== at.value) a.setAttribute(at.name, at.value);
+  patcherEnfants(a, b);
+  for (const [p, v] of props) {
+    if (p === 'value' && a === document.activeElement) continue;       // on ne réécrit pas ce que la personne tape
+    if (a[p] !== v) a[p] = v;
+  }
+}
+function patcherEnfants(a, b) {
+  const neufs = [...b.childNodes];
+  neufs.forEach((n, i) => {
+    const o = a.childNodes[i];
+    if (!o) a.append(n);
+    else if (pareil(o, n)) patcherNoeud(o, n);
+    else a.replaceChild(n, o);
+  });
+  while (a.childNodes.length > neufs.length) a.lastChild.remove();
 }
 
 export function vider(n) {
