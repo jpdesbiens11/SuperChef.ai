@@ -441,3 +441,17 @@ html[data-skin="ardoise"] .frame{border-color:var(--line)}
 .epi-libre>.dept{margin-top:14px}
 .epi-libre #epi-vider{margin:4px 0 8px;min-height:40px;font-size:.9rem}
 .epi-habituels{margin:12px 0 2px}
+
+/* D-G-064 : interrupteur « Masquer les achetés » */
+.prov-filtre{min-height:40px;gap:10px;padding:0 12px;font-size:.92rem}
+.prov-filtre .interrupteur{position:relative;width:38px;height:22px;border-radius:11px;border:2px solid var(--line-strong);background:transparent;flex:none;transition:background .15s}
+.prov-filtre .interrupteur::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
+.prov-filtre[aria-checked="true"]{border-color:var(--accent);color:var(--accent-ink)}
+.prov-filtre[aria-checked="true"] .interrupteur{background:var(--accent);border-color:var(--accent)}
+.prov-filtre[aria-checked="true"] .interrupteur::after{transform:translateX(16px);background:var(--on-accent)}
+.prov-caches{flex-basis:100%;margin:0;font-size:.85rem}
+@media (prefers-reduced-motion:reduce){.prov-filtre .interrupteur,.prov-filtre .interrupteur::after{transition:none}}
+/* l'avis avec un bouton passe sur deux lignes au téléphone (le bouton « Approuver » débordait, 1.25.0) */
+.notice{flex-wrap:wrap}
+.notice p{flex:1 1 200px;min-width:0}
+.notice .btn{flex:none}

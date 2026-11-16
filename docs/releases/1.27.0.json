@@ -1,0 +1,26 @@
+{
+  "version": "1.27.0",
+  "date": "2026-11-16",
+  "mvp": "SuperChef.ai — « Masquer les achetés » : la liste du Provigo s'allège à mesure qu'on remplit le panier",
+  "requis": [
+    "R-10",
+    "R-11"
+  ],
+  "nouveautes": [
+    "04 Provigo : interrupteur « Masquer les achetés » (activé par défaut). Ce qui est coché sort de la vue, et aussi ce qui est déjà au frigo ou à la maison ; il ne reste que ce qu'il faut encore prendre.",
+    "Chaque article coché affiche « dans le panier · masqué » avec « Annuler », au cas d'un toucher de trop. Une ligne dit combien sont masqués ; « Tout est dans le panier » quand la liste est finie.",
+    "À off, la liste complète revient, cases cochées comprises. Le choix est retenu sur l'appareil.",
+    "Au téléphone, l'avis « Semaine pas encore approuvée » ne fait plus déborder son bouton."
+  ],
+  "decisions": [
+    "D-G-064"
+  ],
+  "tests": {
+    "unitaires": 85,
+    "bout_en_bout": 73,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}
