@@ -4,8 +4,9 @@
 // Version 2 (1.1.0) : colonnes reprises de Notion ajoutées à la fin de chaque onglet.
 // Version 3 (1.8.0) : « Originale » et « Adaptations » à la fin de Recettes (D-G-033).
 // Version 4 (1.25.0) : onglet « Épicerie » (articles libres, cases cochées, rayons appris : D-G-062).
+// Version 5 (1.26.0) : « Fois » à la fin d'Épicerie (mémoire des articles ajoutés à la main : D-G-063).
 
-export const VERSION_SCHEMA = 4;
+export const VERSION_SCHEMA = 5;
 
 export const ONGLETS = Object.freeze([
   {
@@ -39,8 +40,11 @@ export const ONGLETS = Object.freeze([
   },
   {
     // D-G-062 : Genre « libre » (article ajouté à la main), « coche » (ingrédient de la semaine coché), « rayon » (rayon appris).
+    // D-G-063 : Genre « memo » (tout article déjà ajouté à la main, rappelé en tapant ; « Fois » = nombre d'ajouts).
     titre: 'Épicerie',
-    colonnes: ['id', 'Genre', 'Semaine du', 'Nom', 'Rayon', 'Pris', 'Clé', 'Modifié le']
+    colonnes: ['id', 'Genre', 'Semaine du', 'Nom', 'Rayon', 'Pris', 'Clé', 'Modifié le',
+      // v5
+      'Fois']
   },
   {
     titre: 'Schéma',

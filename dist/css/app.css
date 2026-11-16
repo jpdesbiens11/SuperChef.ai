@@ -420,3 +420,24 @@ html[data-skin="ardoise"] .frame{border-color:var(--line)}
 .inv-row .epi-btn[aria-pressed="true"]{border-color:var(--accent);background:var(--tint);color:var(--accent-ink)}
 .inv-row.zero .epi-btn{text-decoration:none}
 .epi-epuises{margin:12px 0 2px}
+
+/* D-G-063 : section « Mes articles » (sous les ingrédients), Google Drive, suggestions */
+.epi-libre{margin-top:22px}
+.epi-tete{display:grid;gap:8px;margin-bottom:12px}
+.epi-tete h3{display:flex;justify-content:space-between;align-items:baseline;margin:0;font-size:1.2rem}
+.epi-tete h3 small{font-family:var(--body);color:var(--muted);font-size:.85rem}
+.epi-drive{width:100%;font-size:1rem;text-transform:none;letter-spacing:0}
+.epi-etat{margin:0;color:var(--muted);font-size:.85rem}
+.epi-etat.warn{color:var(--warn)}
+.epi-sugg{display:grid;margin:6px 0 4px}
+.epi-sugg:empty{display:none}
+.sugg{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+.sugg-choix{all:unset;cursor:pointer;flex:1;min-height:var(--tap);display:flex;flex-direction:column;justify-content:center;padding:4px 6px}
+.sugg-choix:focus-visible{outline:2px solid var(--accent)}
+.sugg-choix:hover span{color:var(--accent-ink)}
+.sugg-choix small{color:var(--muted);font-size:.8rem}
+.sugg-choix[disabled]{cursor:default;opacity:.6}
+.sugg .btn.icon{flex:none;min-height:40px;min-width:40px}
+.epi-libre>.dept{margin-top:14px}
+.epi-libre #epi-vider{margin:4px 0 8px;min-height:40px;font-size:.9rem}
+.epi-habituels{margin:12px 0 2px}

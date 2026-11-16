@@ -51,12 +51,18 @@ function patcherNoeud(a, b) {
     if (a[p] !== v) a[p] = v;
   }
 }
+// Un élément avec un id est retrouvé où qu'il soit parmi les enfants (D-G-063) : un rayon qui apparaît plus haut ne
+// remplace plus le formulaire ni un volet ouvert plus bas ; sans id, on compare par position.
 function patcherEnfants(a, b) {
   const neufs = [...b.childNodes];
+  const ids = new Set(neufs.filter((n) => n.nodeType === 1 && n.id).map((n) => n.id));
   neufs.forEach((n, i) => {
-    const o = a.childNodes[i];
+    let o = a.childNodes[i];
+    const nid = n.nodeType === 1 ? n.id : '';
+    if (nid && o?.id !== nid) { const m = [...a.children].find((c) => c.id === nid); if (m) { a.insertBefore(m, o || null); o = m; } }
     if (!o) a.append(n);
     else if (pareil(o, n)) patcherNoeud(o, n);
+    else if (o.nodeType === 1 && o.id && ids.has(o.id)) a.insertBefore(n, o);   // o sert plus loin : on le garde
     else a.replaceChild(n, o);
   });
   while (a.childNodes.length > neufs.length) a.lastChild.remove();
