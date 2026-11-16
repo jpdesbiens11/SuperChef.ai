@@ -1,13 +1,13 @@
 // 04 · Provigo : liste d'épicerie par rayon (R-10, R-11). Repris de Gordon Rams.ai.
-import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.26.0';
-import { el, ico, patcher } from '../el.js?v=1.26.0';
-import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.26.0';
-import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.26.0';
-import { valeurCellule } from '../store.js?v=1.26.0';
-import { frozen } from './fiche.js?v=1.26.0';
-import { setQty, addInv } from './garde-manger.js?v=1.26.0';
-import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.26.0';
-import { CATALOGUE, rayonDe, cleRayon, ajouterLibre, suggestions } from '../epicerie.js?v=1.26.0';
+import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.27.0';
+import { el, ico, patcher } from '../el.js?v=1.27.0';
+import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.27.0';
+import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.27.0';
+import { valeurCellule } from '../store.js?v=1.27.0';
+import { frozen } from './fiche.js?v=1.27.0';
+import { setQty, addInv } from './garde-manger.js?v=1.27.0';
+import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.27.0';
+import { CATALOGUE, rayonDe, cleRayon, ajouterLibre, suggestions } from '../epicerie.js?v=1.27.0';
 
 /* ---------- D-G-062 : la liste vit dans l'onglet « Épicerie » du classeur ----------
    L'écran change tout de suite ; l'écriture suit, une à la fois par ligne (deux touchers rapides ne font pas deux lignes).
@@ -188,6 +188,7 @@ export function basculerIdee(nom, rayon) {
 export async function cocherLibre(id) {
   const a = libres().find((x) => x.id === id); if (!a) return;
   a.pris = !a.pris; render(); syncLibre(id);
+  if (a.pris) annoncerMasque(a.nom, () => cocherLibre(id));
   const m = invMatch(ingKey(a.nom));
   if (a.pris) { if (m) await setQty(m, m.qty + 1); else await addInv(a.nom); } else if (m && m.qty > 0) await setQty(m, m.qty - 1);
 }
@@ -202,6 +203,15 @@ export function viderPris() {
   const n = pris.length;
   toast(`${n} article${n > 1 ? 's' : ''} pris retiré${n > 1 ? 's' : ''}`, { label: 'Annuler', fn: () => { S.prov.libres = avant; render(); pris.forEach((x) => syncLibre(x.id)); } });
 }
+// D-G-064 : « Masquer les achetés » — ce qui est coché (et ce qui est déjà au frigo ou à la maison) sort de la vue ;
+// la liste raccourcit à mesure qu'on remplit le panier. Préférence de l'appareil, activée par défaut.
+const CLE_FILTRE = 'superchef-provigo-masquer';
+export const masquerAchetes = () => { try { return localStorage.getItem(CLE_FILTRE) !== 'non'; } catch (_) { return true; } };
+export function basculerFiltre() {
+  try { localStorage.setItem(CLE_FILTRE, masquerAchetes() ? 'non' : 'oui'); } catch (_) { /* stockage absent */ }
+  render();
+}
+const annoncerMasque = (nom, annuler) => { if (masquerAchetes()) toast(`« ${nom} » dans le panier · masqué`, { label: 'Annuler', fn: annuler }); };
 export const focusLibre = () => { const i = $('#epi-nom'); if (i) { i.value = ''; i.focus(); } };
 
 const puceIdee = (n, rayon, deja) => el('button', { type: 'button', class: 'btn', 'data-epiajout': n, 'data-rayon': rayon || null, 'aria-pressed': String(deja.has(cleRayon(n))) }, n);
@@ -223,7 +233,7 @@ function sectionLibre() {
       el('button', { class: 'btn primary', type: 'submit' }, ico('plus'), 'Ajouter')),
     el('div', { id: 'epi-sugg', class: 'epi-sugg', role: 'list' }, listeSuggestions()),
     ls.length ? DEPTS.map((d) => {
-      const lib = ls.filter((a) => a.rayon === d); if (!lib.length) return null;
+      const lib = ls.filter((a) => a.rayon === d && !(masquerAchetes() && a.pris)); if (!lib.length) return null;
       return el('div', { class: 'dept' }, el('h3', {}, d, el('small', {}, String(lib.length))), lib.map(ligneLibre));
     }) : el('p', { class: 'hint' }, 'Rien d\'ajouté à la main pour l\'instant. Tape un article : ceux que tu as déjà ajoutés reviennent en premier.'),
     pris ? el('button', { class: 'btn', id: 'epi-vider', type: 'button' }, `Retirer les articles pris (${pris})`) : null,
@@ -264,6 +274,7 @@ export function buildProvigo() {
 export async function toggleGrocery(key) {
   const l = (S.prov.lines || []).find((x) => x.key === key); if (!l) return;
   const on = !S.prov.checked[key]; S.prov.checked[key] = on; render(); syncCoche(key);
+  if (on) annoncerMasque(l.name, () => toggleGrocery(key));
   const m = invMatch(key);
   if (on) { if (m) await setQty(m, m.qty + 1); else await addInv(l.name); } else if (m && m.qty > 0) await setQty(m, m.qty - 1);
 }
@@ -299,7 +310,15 @@ export function viewProvigo() {
     if (frozen()) out.push(el('p', { class: 'hint', style: 'margin:0 0 10px' }, 'Ouvre une recette de la semaine pour cocher ce que tu as déjà, ou touche « J\'en ai » ici : les deux listes se suivent. « Au garde-manger » : tu en as toujours, il ne reviendra plus sur la liste.'));
   }
   const left = buy.filter((l) => !S.prov.checked[l.key]).length + ls.filter((a) => !a.pris).length;
-  if (buy.length || ls.length) out.push(el('div', { class: 'epi-compte' }, el('p', { class: 'label' }, `${left} article${left > 1 ? 's' : ''} à prendre`)));
+  const masquer = masquerAchetes(), achetes = buy.filter((l) => S.prov.checked[l.key]).length + ls.filter((a) => a.pris).length;
+  const caches = achetes + (masquer ? mine.length + home.length : 0);
+  if (buy.length || ls.length || mine.length || home.length) out.push(el('div', { class: 'epi-compte', id: 'prov-compte' },
+    el('p', { class: 'label' }, `${left} article${left > 1 ? 's' : ''} à prendre`),
+    el('button', { class: 'btn prov-filtre', id: 'prov-filtre', type: 'button', role: 'switch', 'aria-checked': String(masquer), 'data-new': '1.27.0-masquer' },
+      el('span', { class: 'interrupteur', 'aria-hidden': 'true' }), 'Masquer les achetés'),
+    masquer && caches ? el('p', { class: 'hint prov-caches' }, [achetes ? `${achetes} dans le panier` : '', mine.length ? `${mine.length} déjà au frigo` : '', home.length ? `${home.length} déjà à la maison` : ''].filter(Boolean).join(' · ') + ' : masqué' + (caches > 1 ? 's' : '') + '.') : null));
+  if (masquer && plan && S.prov.lines && buy.length && buy.every((l) => S.prov.checked[l.key]) && !ls.some((a) => !a.pris)) out.push(frameEmpty('Tout est dans le panier. Bravo ! « Masquer les achetés » à off pour revoir la liste.'));
+  if (masquer) buy = buy.filter((l) => !S.prov.checked[l.key]);
   DEPTS.forEach((d) => {
     const lsd = buy.filter((l) => l.dept === d); if (!lsd.length) return;
     out.push(el('div', { class: 'dept' }, el('h3', {}, d, el('small', {}, String(lsd.length))), lsd.map((l) => el('div', { class: 'glrow' },
@@ -308,6 +327,7 @@ export function viewProvigo() {
       frozen() && el('button', { class: 'btn havebtn', 'data-havebtn': l.key, 'aria-label': `J'ai déjà ${l.name}` }, 'J\'en ai'),
       el('button', { class: 'btn havebtn', 'data-augm': l.key, 'aria-label': `Garder ${l.name} au garde-manger`, title: 'Toujours à la maison : ne revient plus sur la liste', 'data-new': '1.13.0-au-garde-manger' }, 'Au garde-manger')))));
   });
+  if (masquer) { mine = []; home = []; }                         // déjà au frigo ou à la maison : rien à prendre
   if (mine.length) out.push(el('div', { class: 'frame home-list mine' }, el('b', {}, `Coché comme déjà au frigo (${mine.length})`),
     mine.map((l) => el('div', { class: 'mrow' }, el('span', {}, l.name, el('small', {}, l.recipes.join(', '))),
       el('button', { class: 'btn', 'data-havebtn': l.key, 'aria-label': `Remettre ${l.name} sur la liste` }, 'Remettre')))));

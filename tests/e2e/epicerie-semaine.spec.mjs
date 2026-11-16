@@ -21,6 +21,7 @@ const epicerie = (sim) => { const t = [...sim.classeurs.values()][0].onglets['É
 const inventaire = (sim) => { const t = [...sim.classeurs.values()][0].onglets.Inventaire; const h = t[0]; return t.slice(1).map((l) => Object.fromEntries(h.map((c, j) => [c, l[j] ?? '']))); };
 
 test('Provigo : articles libres classés par rayon, gardés dans le classeur et au garde-manger', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('superchef-provigo-masquer', 'non'));   // on veut voir les cases cochées (D-G-064 à part)
   const { sim, erreurs } = await demarrer(page);
   await page.locator('[data-go="provigo"]').click();
   await expect(page.locator('.glrow').first()).toBeVisible();
@@ -187,5 +188,37 @@ test('Semaine : compacte au téléphone, sans tout reconstruire', async ({ page 
   await page.getByRole('button', { name: /Continuer|Se connecter/ }).click();
   await expect(page.locator('.week .day[data-jour]')).toHaveCount(4);
   await expect(page.locator('.week.compacte')).toHaveCount(0);
+  expect(erreurs).toEqual([]);
+});
+
+test('D-G-064 : « Masquer les achetés » allège la liste au fur et à mesure', async ({ page }) => {
+  const { erreurs } = await demarrer(page);
+  await page.locator('[data-go="provigo"]').click();
+  const filtre = page.locator('#prov-filtre');
+  await expect(filtre).toHaveAttribute('aria-checked', 'true');                 // activé par défaut
+  await page.locator('#epi-nom').fill('Piles AA');
+  await page.locator('#epi-nom').press('Enter');
+  const lignes = page.locator('#main > .dept .glrow');
+  const avant = await lignes.count();
+  const premier = lignes.first(), nom = (await premier.locator('.t > span').textContent()).trim();
+  // Cocher : l'ingrédient sort de la vue, « Annuler » le remet.
+  await premier.locator('input').click();
+  await expect(lignes).toHaveCount(avant - 1);
+  await expect(page.locator('#toast')).toContainText(`« ${nom} » dans le panier`);
+  await expect(page.locator('.prov-caches')).toContainText('1 dans le panier');
+  await page.locator('#toast button').click();
+  await expect(lignes).toHaveCount(avant);
+  // Un article à moi aussi.
+  await page.locator('.glrow.libre', { hasText: 'Piles AA' }).locator('input').click();
+  await expect(page.locator('.glrow.libre', { hasText: 'Piles AA' })).toHaveCount(0);
+  // À off : tout revient, coché.
+  await filtre.click();
+  await expect(filtre).toHaveAttribute('aria-checked', 'false');
+  await expect(page.locator('.glrow.libre', { hasText: 'Piles AA' }).locator('input')).toBeChecked();
+  await expect(page.locator('.prov-caches')).toHaveCount(0);
+  // Le choix est retenu sur l'appareil.
+  await page.locator('[data-go="semaine"]').click();
+  await page.locator('[data-go="provigo"]').click();
+  await expect(page.locator('#prov-filtre')).toHaveAttribute('aria-checked', 'false');
   expect(erreurs).toEqual([]);
 });
