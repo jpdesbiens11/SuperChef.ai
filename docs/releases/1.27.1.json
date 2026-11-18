@@ -1,0 +1,25 @@
+{
+  "version": "1.27.1",
+  "date": "2026-11-18",
+  "mvp": "SuperChef.ai — « Masquer les achetés » partagé entre le PC et le téléphone",
+  "requis": [
+    "R-10",
+    "R-11"
+  ],
+  "nouveautes": [
+    "L'interrupteur « Masquer les achetés » est enregistré dans ton classeur Google : mis à off au PC, il l'est aussi au téléphone (en revenant dans l'app ou en ouvrant Provigo).",
+    "Un choix fait sur un appareil en 1.27.0 passe dans le classeur à la première ouverture.",
+    "README : comment donner l'accès Google à une autre personne (bêta-testeur)."
+  ],
+  "decisions": [
+    "D-G-065"
+  ],
+  "tests": {
+    "unitaires": 85,
+    "bout_en_bout": 73,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}

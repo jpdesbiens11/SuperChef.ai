@@ -1,13 +1,13 @@
 // 04 · Provigo : liste d'épicerie par rayon (R-10, R-11). Repris de Gordon Rams.ai.
-import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.27.0';
-import { el, ico, patcher } from '../el.js?v=1.27.0';
-import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.27.0';
-import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.27.0';
-import { valeurCellule } from '../store.js?v=1.27.0';
-import { frozen } from './fiche.js?v=1.27.0';
-import { setQty, addInv } from './garde-manger.js?v=1.27.0';
-import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.27.0';
-import { CATALOGUE, rayonDe, cleRayon, ajouterLibre, suggestions } from '../epicerie.js?v=1.27.0';
+import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.27.1';
+import { el, ico, patcher } from '../el.js?v=1.27.1';
+import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.27.1';
+import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.27.1';
+import { valeurCellule } from '../store.js?v=1.27.1';
+import { frozen } from './fiche.js?v=1.27.1';
+import { setQty, addInv } from './garde-manger.js?v=1.27.1';
+import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.27.1';
+import { CATALOGUE, rayonDe, cleRayon, ajouterLibre, suggestions } from '../epicerie.js?v=1.27.1';
 
 /* ---------- D-G-062 : la liste vit dans l'onglet « Épicerie » du classeur ----------
    L'écran change tout de suite ; l'écriture suit, une à la fois par ligne (deux touchers rapides ne font pas deux lignes).
@@ -21,6 +21,7 @@ const idCoche = (key) => `e-c-${semaine()}-${slug(key) || 'x'}`;
 const idRayon = (cle) => `e-r-${slug(cle) || 'x'}`;
 const idMemo = (cle) => `e-m-${slug(cle) || 'x'}`;
 const memo = () => S.prov.memo || (S.prov.memo = {});
+const ID_FILTRE = 'e-p-masquer-achetes';
 
 export function depuisClasseur() {
   const rows = S.prov.rows || [], w = semaine();
@@ -28,6 +29,9 @@ export function depuisClasseur() {
   S.prov.checked = Object.fromEntries(rows.filter((r) => r.Genre === 'coche' && String(r['Semaine du']).slice(0, 10) === w && r['Clé']).map((r) => [r['Clé'], oui(r.Pris)]));
   S.prov.appris = Object.fromEntries(rows.filter((r) => r.Genre === 'rayon' && r.Nom).map((r) => [r.Nom, r.Rayon]));
   // D-G-063 : la mémoire de tout ce qui a été ajouté à la main (rappelé en tapant, les plus fréquents d'abord).
+  // D-G-065 : l'interrupteur « Masquer les achetés » est partagé (une ligne Genre « pref ») ; sans ligne, l'appareil décide.
+  const pref = rows.find((r) => r.id === ID_FILTRE);
+  S.prov.masquer = pref ? oui(pref.Pris) : null;
   S.prov.memo = Object.fromEntries(rows.filter((r) => r.Genre === 'memo' && r.Nom).map((r) => [r['Clé'] || cleRayon(r.Nom), { nom: r.Nom, rayon: r.Rayon || rayonDe(r.Nom), fois: Math.max(1, Number(r.Fois) || 1) }]));
 }
 const file = new Map();
@@ -57,6 +61,7 @@ const syncLibre = (id) => synchroniser(id, () => {
 });
 const syncCoche = (key) => synchroniser(idCoche(key), () => ({ Genre: 'coche', 'Semaine du': semaine(), 'Clé': key, Nom: (S.prov.lines || []).find((l) => l.key === key)?.name || key, Pris: !!S.prov.checked[key] }));
 const syncRayon = (cle) => synchroniser(idRayon(cle), () => S.prov.appris[cle] && { Genre: 'rayon', Nom: cle, Rayon: S.prov.appris[cle] });
+const syncFiltre = () => synchroniser(ID_FILTRE, () => S.prov.masquer === null || S.prov.masquer === undefined ? null : { Genre: 'pref', Nom: 'masquer-achetes', Pris: !!S.prov.masquer });
 const syncMemo = (cle) => synchroniser(idMemo(cle), () => { const m = memo()[cle]; return m && { Genre: 'memo', Nom: m.nom, Rayon: m.rayon, 'Clé': cle, Fois: m.fois }; });
 // Chaque ajout à la main est noté (ou compté une fois de plus) : il reviendra en suggestion, même retiré de la liste.
 function noter(nom, rayon) {
@@ -106,6 +111,9 @@ export async function initEpicerie() {
     cles.push(cleSem);
     for (const [k, v] of Object.entries(coches)) if (v && !S.prov.checked[k]) { S.prov.checked[k] = true; envois.push(syncCoche(k)); }
   }
+  // D-G-065 : un filtre mis à off sur cet appareil (1.27.0) passe dans le classeur s'il n'y a pas encore de choix partagé.
+  if (S.prov.masquer === null && filtreLocal() === 'non') { S.prov.masquer = false; envois.push(syncFiltre()); }
+  else if (typeof S.prov.masquer === 'boolean') { try { localStorage.setItem(CLE_FILTRE, S.prov.masquer ? 'oui' : 'non'); } catch (_) { /* stockage absent */ } }
   // D-G-063 : les articles libres d'avant la mémoire y entrent une fois.
   for (const a of libres()) { const c = cleRayon(a.nom); if (c && !memo()[c]) { memo()[c] = { nom: a.nom, rayon: a.rayon, fois: 1 }; envois.push(syncMemo(c)); } }
   if (!envois.length && !cles.length) return;
@@ -122,7 +130,7 @@ export async function enregistrerTout(approuver) {
   try {
     if (!S.saved && S.plan.some(Boolean)) { await approuver(); ok = S.saved; }
     const envois = [...libres().map((a) => syncLibre(a.id)), ...Object.keys(S.prov.checked || {}).map(syncCoche),
-      ...Object.keys(S.prov.appris || {}).map(syncRayon), ...Object.keys(memo()).map(syncMemo)];
+      ...Object.keys(S.prov.appris || {}).map(syncRayon), ...Object.keys(memo()).map(syncMemo), syncFiltre()];
     ok = (await Promise.all(envois)).every(Boolean) && ok;
     await relireEpicerie(); depuisClasseur();
     const n = libres().filter((a) => !a.pris).length;
@@ -204,12 +212,15 @@ export function viderPris() {
   toast(`${n} article${n > 1 ? 's' : ''} pris retiré${n > 1 ? 's' : ''}`, { label: 'Annuler', fn: () => { S.prov.libres = avant; render(); pris.forEach((x) => syncLibre(x.id)); } });
 }
 // D-G-064 : « Masquer les achetés » — ce qui est coché (et ce qui est déjà au frigo ou à la maison) sort de la vue ;
-// la liste raccourcit à mesure qu'on remplit le panier. Préférence de l'appareil, activée par défaut.
+// la liste raccourcit à mesure qu'on remplit le panier. Activé par défaut.
+// D-G-065 : le choix est dans le classeur, le même au PC et au téléphone ; l'appareil en garde une copie (hors ligne, avant la connexion).
 const CLE_FILTRE = 'superchef-provigo-masquer';
-export const masquerAchetes = () => { try { return localStorage.getItem(CLE_FILTRE) !== 'non'; } catch (_) { return true; } };
+const filtreLocal = () => { try { return localStorage.getItem(CLE_FILTRE); } catch (_) { return null; } };
+export const masquerAchetes = () => (typeof S.prov.masquer === 'boolean' ? S.prov.masquer : filtreLocal() !== 'non');
 export function basculerFiltre() {
-  try { localStorage.setItem(CLE_FILTRE, masquerAchetes() ? 'non' : 'oui'); } catch (_) { /* stockage absent */ }
-  render();
+  S.prov.masquer = !masquerAchetes();
+  try { localStorage.setItem(CLE_FILTRE, S.prov.masquer ? 'oui' : 'non'); } catch (_) { /* stockage absent */ }
+  render(); syncFiltre();
 }
 const annoncerMasque = (nom, annuler) => { if (masquerAchetes()) toast(`« ${nom} » dans le panier · masqué`, { label: 'Annuler', fn: annuler }); };
 export const focusLibre = () => { const i = $('#epi-nom'); if (i) { i.value = ''; i.focus(); } };
