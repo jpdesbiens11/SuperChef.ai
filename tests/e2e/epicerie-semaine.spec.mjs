@@ -192,7 +192,7 @@ test('Semaine : compacte au téléphone, sans tout reconstruire', async ({ page 
 });
 
 test('D-G-064 : « Masquer les achetés » allège la liste au fur et à mesure', async ({ page }) => {
-  const { erreurs } = await demarrer(page);
+  const { sim, erreurs } = await demarrer(page);
   await page.locator('[data-go="provigo"]').click();
   const filtre = page.locator('#prov-filtre');
   await expect(filtre).toHaveAttribute('aria-checked', 'true');                 // activé par défaut
@@ -216,9 +216,17 @@ test('D-G-064 : « Masquer les achetés » allège la liste au fur et à mesure'
   await expect(filtre).toHaveAttribute('aria-checked', 'false');
   await expect(page.locator('.glrow.libre', { hasText: 'Piles AA' }).locator('input')).toBeChecked();
   await expect(page.locator('.prov-caches')).toHaveCount(0);
-  // Le choix est retenu sur l'appareil.
-  await page.locator('[data-go="semaine"]').click();
+  // D-G-065 : le choix est dans le classeur, donc le même sur l'autre appareil.
+  await expect.poll(() => epicerie(sim).filter((r) => r.Genre === 'pref').map((r) => [r.Nom, r.Pris])).toEqual([['masquer-achetes', 'non']]);
+  await page.evaluate(() => localStorage.removeItem('superchef-provigo-masquer'));   // comme un autre téléphone
+  await page.reload();
+  await page.getByRole('button', { name: /Continuer|Se connecter/ }).click();
   await page.locator('[data-go="provigo"]').click();
   await expect(page.locator('#prov-filtre')).toHaveAttribute('aria-checked', 'false');
+  // Remis à on au PC : le téléphone le voit en revenant dans l'app.
+  const t = [...sim.classeurs.values()][0].onglets['Épicerie'], h = t[0], k = t.findIndex((l) => l[0] === 'e-p-masquer-achetes');
+  t[k][h.indexOf('Pris')] = 'oui';
+  await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+  await expect(page.locator('#prov-filtre')).toHaveAttribute('aria-checked', 'true');
   expect(erreurs).toEqual([]);
 });
