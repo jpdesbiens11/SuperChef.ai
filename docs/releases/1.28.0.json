@@ -1,0 +1,25 @@
+{
+  "version": "1.28.0",
+  "date": "2026-11-22",
+  "mvp": "SuperChef.ai — kit de départ Air fryer (20 recettes)",
+  "requis": [
+    "R-02"
+  ],
+  "nouveautes": [
+    "Compte → Kits de départ : une 11e tuile « Air fryer », les 20 classiques de la friteuse à air chaud (ailes Buffalo, frites de patates douces, poisson pané, saumon, hamburgers, légumes croustillants, œufs durs, bacon, pain doré, pommes cuites…).",
+    "Chaque recette porte « air fryer » dans son nom, l'outil Air fryer et l'étiquette Air fryer ; elle arrive « À trier ».",
+    "Le bouton compte les vraies recettes de chaque kit : « Ajouter 1 kit (20 recettes) » pour Air fryer.",
+    "Les recettes du kit sont rédigées par Claude à la demande de JP, sans recette d'inspiration : « À vérifier » le dit, à valider à l'essai."
+  ],
+  "decisions": [
+    "D-G-066"
+  ],
+  "tests": {
+    "unitaires": 87,
+    "bout_en_bout": 73,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}
