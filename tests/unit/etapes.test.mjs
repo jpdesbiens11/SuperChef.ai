@@ -11,7 +11,7 @@ const KITS = new URL('../../dist/kits/', import.meta.url).pathname;
 
 test('D-G-050 : toutes les recettes des kits de départ sont bien découpées', async () => {
   const fichiers = (await readdir(KITS)).filter((f) => f.endsWith('.json') && f !== 'stock-base.json');
-  assert.equal(fichiers.length, 10);
+  assert.equal(fichiers.length, 11);
   for (const f of fichiers) {
     for (const r of JSON.parse(await readFile(KITS + f, 'utf8')).recettes) assert.deepEqual(problemesRecette(r), [], `${f} · ${r.Nom}`);
   }

@@ -1,10 +1,10 @@
 // Feuille Compte : connexion, classeur, import (R-02). Même gabarit que les feuilles de Gordon Rams.ai.
-import { S, $, toast } from '../etat.js?v=1.27.1';
-import { el, ico, vider } from '../el.js?v=1.27.1';
-import { lienClasseur, lienDossier, reinitialiser, texteReparation } from '../store.js?v=1.27.1';
-import { valider, importer } from '../import.js?v=1.27.1';
-import { CONFIG } from '../config.js?v=1.27.1';
-import { iaDisponible } from '../ia.js?v=1.27.1';
+import { S, $, toast } from '../etat.js?v=1.28.0';
+import { el, ico, vider } from '../el.js?v=1.28.0';
+import { lienClasseur, lienDossier, reinitialiser, texteReparation } from '../store.js?v=1.28.0';
+import { valider, importer } from '../import.js?v=1.28.0';
+import { CONFIG } from '../config.js?v=1.28.0';
+import { iaDisponible } from '../ia.js?v=1.28.0';
 
 export function openCompte(surImporter) {
   if ($('#comptesheet')) return;
@@ -28,8 +28,8 @@ export function openCompte(surImporter) {
           el('button', { class: 'btn', id: 'guidebtn', type: 'button', 'data-new': '1.20.0-guide' }, ico('chef'), 'Lancer le guide'))),
       el('h4', { id: 'kits', 'data-new': '1.3.0-kits' }, 'Kits de départ'),
       el('p', { style: 'color:var(--muted);max-width:60ch;margin:0 0 10px' }, S.book.length
-        ? 'Touche un ou plusieurs kits de 10 recettes (un crochet apparaît), puis ajoute-les. Ce qui est déjà là n\'est pas dédoublé.'
-        : 'Ton livre est vide. Touche un ou plusieurs kits de 10 recettes (un crochet apparaît), puis ajoute-les : tu les trieras ensuite dans le Livre.'),
+        ? 'Touche un ou plusieurs kits pour les cocher (10 recettes chacun, 20 pour Air fryer), puis ajoute-les. Ce qui est déjà là n\'est pas dédoublé.'
+        : 'Ton livre est vide. Touche un ou plusieurs kits pour les cocher (10 recettes chacun, 20 pour Air fryer), puis ajoute-les : tu les trieras ensuite dans le Livre.'),
       el('div', { class: 'kits', id: 'kitchoix', role: 'group', 'aria-label': 'Kits de départ' }, KITS.map((k) => el('button', { class: 'btn kit', type: 'button', 'data-kit': k.id, 'aria-pressed': 'false' }, el('b', {}, k.nom), el('small', {}, k.description)))),
       el('div', { class: 'add-acts' }, el('button', { class: 'btn primary', id: 'chargerkits', type: 'button', disabled: true }, ico('plus'), 'Choisis un ou plusieurs kits')),
       el('div', { class: 'import-res', id: 'kit-res', 'aria-live': 'polite' }),
@@ -68,14 +68,16 @@ export const KITS = [
   { id: 'indienne', nom: 'Inde', description: 'currys doux, dal et riz parfumé' },
   { id: 'russe', nom: 'Russe', description: 'les plats réconfortants d\'Europe de l\'Est' },
   { id: 'francaise', nom: 'Français', description: 'les grands plats de bistro et de famille' },
-  { id: 'enfants', nom: 'Enfants', description: 'mets faciles et plats maison à congeler' }
+  { id: 'enfants', nom: 'Enfants', description: 'mets faciles et plats maison à congeler' },
+  { id: 'airfryer', nom: 'Air fryer', description: 'les 20 classiques de la friteuse à air chaud', n: 20 }
 ];
 const texteBiblio = () => `${S.book.length} recettes · ${S.inv.items?.length || 0} articles`;
 // D-G-038 : la feuille Compte reste ouverte pendant un ajout ; son compteur suit le classeur relu.
 export function majBiblio() { const n = $('#compte-biblio'); if (n) n.textContent = texteBiblio(); }
 export function majKits() {
-  const k = document.querySelectorAll('[data-kit][aria-pressed="true"]').length, b = $('#chargerkits'); if (!b) return;
-  b.disabled = !k; vider(b).append(ico('plus'), k ? `Ajouter ${k} kit${k > 1 ? 's' : ''} (${k * 10} recettes)` : 'Choisis un ou plusieurs kits');
+  const sel = [...document.querySelectorAll('[data-kit][aria-pressed="true"]')], k = sel.length, b = $('#chargerkits'); if (!b) return;
+  const n = sel.reduce((t, x) => t + (KITS.find((y) => y.id === x.dataset.kit)?.n || 10), 0);
+  b.disabled = !k; vider(b).append(ico('plus'), k ? `Ajouter ${k} kit${k > 1 ? 's' : ''} (${n} recettes)` : 'Choisis un ou plusieurs kits');
 }
 export async function chargerKits(apres) {
   const choisis = [...document.querySelectorAll('[data-kit][aria-pressed="true"]')].map((b) => b.dataset.kit);

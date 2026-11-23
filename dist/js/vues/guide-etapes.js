@@ -1,8 +1,8 @@
 // Les étapes de la mise en place guidée (D-G-056, D-G-057) : de l'accueil (connexion Google) à l'étape 2 du souper de lundi.
 // Chaque étape dit son écran (ecran), ce qu'elle encadre (cible), quand elle est faite (fait) et le geste que le doigt
 // mime (geste). Textes courts, une seule action à la fois : pensé pour qu'une grand-mère avec un compte Google s'y retrouve.
-import { S, $, STEPS, DAYS } from '../etat.js?v=1.27.1';
-import { iaDisponible } from '../ia.js?v=1.27.1';
+import { S, $, STEPS, DAYS } from '../etat.js?v=1.28.0';
+import { iaDisponible } from '../ia.js?v=1.28.0';
 
 export const val = (v) => (typeof v === 'function' ? v() : v);
 export const auLivre = () => (S.book || []).filter((r) => r.statut === 'Au livre').length;

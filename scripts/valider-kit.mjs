@@ -13,7 +13,8 @@ export async function verifierKit(chemin) {
   if (brut.kit?.id !== id) err.push(`kit.id doit valoir « ${id} »`);
   if (!brut.kit?.nom || !brut.kit?.description) err.push('kit.nom et kit.description requis');
   const rec = brut.recettes || [];
-  if (rec.length !== 10) err.push(`10 recettes attendues, ${rec.length} trouvées`);
+  const attendu = brut.kit?.nombre ?? 10; // D-G-066 : 10 par kit, sauf kit.nombre (Air fryer : 20)
+  if (rec.length !== attendu) err.push(`${attendu} recettes attendues, ${rec.length} trouvées`);
   const noms = new Set();
   rec.forEach((r, i) => {
     const o = `${r.Nom || `recettes[${i}]`}`;

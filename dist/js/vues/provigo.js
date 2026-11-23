@@ -1,13 +1,13 @@
 // 04 · Provigo : liste d'épicerie par rayon (R-10, R-11). Repris de Gordon Rams.ai.
-import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.27.1';
-import { el, ico, patcher } from '../el.js?v=1.27.1';
-import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.27.1';
-import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.27.1';
-import { valeurCellule } from '../store.js?v=1.27.1';
-import { frozen } from './fiche.js?v=1.27.1';
-import { setQty, addInv } from './garde-manger.js?v=1.27.1';
-import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.27.1';
-import { CATALOGUE, rayonDe, cleRayon, ajouterLibre, suggestions } from '../epicerie.js?v=1.27.1';
+import { S, $, DEPTS, iso, norm, weekLabel, render, toast, errText } from '../etat.js?v=1.28.0';
+import { el, ico, patcher } from '../el.js?v=1.28.0';
+import { getRecipe, majArticle, supprimerArticle, ajouterArticle, slug, relireEpicerie, ajouterLigneEpi, majLigneEpi, supprimerLigneEpi } from '../donnees.js?v=1.28.0';
+import { ingKey, niceName, deptOf, invMatch, isStaple, neverBuy, zoneOf } from '../cuisine.js?v=1.28.0';
+import { valeurCellule } from '../store.js?v=1.28.0';
+import { frozen } from './fiche.js?v=1.28.0';
+import { setQty, addInv } from './garde-manger.js?v=1.28.0';
+import { panelHead, skeleton, noticeWarn, frameEmpty } from './commun.js?v=1.28.0';
+import { CATALOGUE, rayonDe, cleRayon, ajouterLibre, suggestions } from '../epicerie.js?v=1.28.0';
 
 /* ---------- D-G-062 : la liste vit dans l'onglet « Épicerie » du classeur ----------
    L'écran change tout de suite ; l'écriture suit, une à la fois par ligne (deux touchers rapides ne font pas deux lignes).

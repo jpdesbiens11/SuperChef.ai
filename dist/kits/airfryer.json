@@ -1,0 +1,823 @@
+{
+  "format": "superchef-import",
+  "version": 1,
+  "schema": 2,
+  "genere_le": "2026-11-22",
+  "source": "Kit SuperChef.ai — Air fryer",
+  "kit": {
+    "id": "airfryer",
+    "nom": "Air fryer",
+    "nombre": 20,
+    "description": "Les 20 classiques de la friteuse à air chaud : ailes, frites, poisson pané, légumes croustillants, déjeuners et un dessert."
+  },
+  "recettes": [
+    {
+      "id": "k-airfryer-ailes-de-poulet-buffalo",
+      "Nom": "Ailes de poulet Buffalo à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Poulet",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 40,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "1,2 kg (2 ½ lb) d'ailes de poulet, séparées aux jointures",
+        "15 ml (1 c. à soupe) de poudre à pâte (sans aluminium)",
+        "5 ml (1 c. à thé) de sel",
+        "5 ml (1 c. à thé) de poudre d'ail",
+        "5 ml (1 c. à thé) de paprika",
+        "## Sauce Buffalo",
+        "75 ml (⅓ tasse) de sauce piquante (type Frank's RedHot)",
+        "45 ml (3 c. à soupe) de beurre, fondu",
+        "15 ml (1 c. à soupe) de miel",
+        "## Pour servir",
+        "Bâtonnets de céleri et de carotte",
+        "Trempette ranch ou au fromage bleu"
+      ],
+      "Étapes": [
+        "Éponger les ailes avec du papier absorbant, c'est le secret du croustillant.",
+        "Dans un grand bol, mélanger la poudre à pâte, le sel, la poudre d'ail et le paprika. Ajouter les ailes et bien les enrober.",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Déposer les ailes en une seule couche, sans les tasser (cuire en 2 fois au besoin).",
+        "Cuire 12 minutes, retourner les ailes, puis monter à 200 °C (400 °F) et cuire encore 10 à 12 minutes, jusqu'à ce qu'elles soient dorées et croustillantes (74 °C / 165 °F à cœur).",
+        "Pendant ce temps, fouetter la sauce piquante, le beurre fondu et le miel.",
+        "Mettre les ailes dans un grand bol, verser la sauce et remuer pour bien les enrober. Servir avec les crudités et la trempette."
+      ],
+      "Tâches sous-chef": [
+        "Éponger les ailes avec du papier absorbant",
+        "Mélanger les épices dans le bol",
+        "Couper le céleri et les carottes en bâtonnets"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. La poudre à pâte doit être sans aluminium, sinon goût métallique. Mi-épicé : réduire la sauce piquante pour les enfants.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-frites-de-patates-douces",
+      "Nom": "Frites de patates douces à l'air fryer",
+      "Type": "Accompagnement",
+      "Statut": "À trier",
+      "Protéine": "Végé",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 30,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "2 patates douces moyennes, en bâtonnets de 1 cm (½ po)",
+        "15 ml (1 c. à soupe) de fécule de maïs",
+        "15 ml (1 c. à soupe) d'huile végétale",
+        "2,5 ml (½ c. à thé) de paprika fumé",
+        "2,5 ml (½ c. à thé) de poudre d'ail",
+        "Sel et poivre",
+        "## Mayo épicée",
+        "60 ml (¼ tasse) de mayonnaise",
+        "5 ml (1 c. à thé) de sriracha"
+      ],
+      "Étapes": [
+        "Faire tremper les bâtonnets de patates douces 15 minutes dans l'eau froide si on a le temps, puis bien les éponger.",
+        "Dans un bol, saupoudrer les bâtonnets de fécule et remuer. Ajouter l'huile, le paprika et la poudre d'ail. Remuer.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Étaler les frites en une seule couche (en 2 fois au besoin).",
+        "Cuire 15 à 18 minutes en secouant le panier à mi-cuisson, jusqu'à ce qu'elles soient dorées.",
+        "Saler et poivrer à la sortie. Servir avec la mayonnaise mélangée à la sriracha."
+      ],
+      "Tâches sous-chef": [
+        "Éponger les bâtonnets",
+        "Saupoudrer la fécule et mélanger",
+        "Mélanger la mayo épicée"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Temps sans le trempage facultatif.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-grelots-a-l-ail-et-parmesan",
+      "Nom": "Pommes de terre grelots à l'ail et parmesan à l'air fryer",
+      "Type": "Accompagnement",
+      "Statut": "À trier",
+      "Protéine": "Végé",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 25,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "680 g (1 ½ lb) de pommes de terre grelots, coupées en deux",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "2 gousses d'ail, hachées",
+        "5 ml (1 c. à thé) de romarin séché (ou thym)",
+        "30 ml (2 c. à soupe) de parmesan râpé",
+        "Persil frais haché, au goût",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Dans un bol, mélanger les grelots avec l'huile, l'ail et le romarin. Saler et poivrer.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Cuire les grelots 18 à 20 minutes en secouant le panier à mi-cuisson.",
+        "Parsemer de parmesan les 2 dernières minutes.",
+        "Garnir de persil et servir."
+      ],
+      "Tâches sous-chef": [
+        "Couper les grelots en deux (couteau d'office)",
+        "Mesurer l'huile et le romarin",
+        "Parsemer le parmesan"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-saumon-citron-aneth",
+      "Nom": "Saumon au citron et à l'aneth à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Poisson & fruits de mer",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 20,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "4 pavés de saumon de 150 g (5 oz) chacun, avec la peau",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "15 ml (1 c. à soupe) de moutarde de Dijon",
+        "15 ml (1 c. à soupe) de miel",
+        "Le zeste et le jus de ½ citron",
+        "15 ml (1 c. à soupe) d'aneth frais haché (ou 5 ml séché)",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Mélanger l'huile, la moutarde, le miel, le zeste et le jus de citron et l'aneth.",
+        "Éponger le saumon, saler et poivrer, puis le badigeonner du mélange.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Déposer le saumon côté peau en dessous (sur du papier parchemin perforé si désiré).",
+        "Cuire 8 à 10 minutes, jusqu'à ce que la chair se défasse à la fourchette (plus longtemps si les pavés sont épais).",
+        "Servir avec du riz et un légume vert."
+      ],
+      "Tâches sous-chef": [
+        "Zester et presser le citron",
+        "Mélanger la sauce",
+        "Badigeonner le saumon avec un pinceau"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-poitrines-de-poulet-juteuses",
+      "Nom": "Poitrines de poulet juteuses à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Poulet",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 30,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "4 poitrines de poulet désossées sans peau (environ 200 g / 7 oz chacune)",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "5 ml (1 c. à thé) de paprika",
+        "5 ml (1 c. à thé) de poudre d'ail",
+        "2,5 ml (½ c. à thé) de poudre d'oignon",
+        "2,5 ml (½ c. à thé) d'origan séché",
+        "15 ml (1 c. à soupe) de cassonade",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Aplatir légèrement les poitrines à la main ou au rouleau pour une épaisseur égale.",
+        "Mélanger le paprika, la poudre d'ail, la poudre d'oignon, l'origan et la cassonade. Huiler le poulet et le frotter du mélange. Saler et poivrer.",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Cuire 9 minutes, retourner, puis cuire 8 à 10 minutes de plus, jusqu'à 74 °C (165 °F) au centre.",
+        "Laisser reposer 5 minutes avant de trancher."
+      ],
+      "Tâches sous-chef": [
+        "Mélanger les épices",
+        "Frotter le poulet avec les épices (avec des gants)",
+        "Aplatir les poitrines au rouleau dans un sac"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Le temps varie selon l'épaisseur : utiliser un thermomètre.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-hauts-de-cuisse-croustillants",
+      "Nom": "Hauts de cuisse de poulet croustillants à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Poulet",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 35,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "8 hauts de cuisse de poulet avec l'os et la peau",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "10 ml (2 c. à thé) de paprika fumé",
+        "5 ml (1 c. à thé) de poudre d'ail",
+        "5 ml (1 c. à thé) de thym séché",
+        "Le zeste de 1 citron",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Éponger les hauts de cuisse. Les enrober d'huile, puis du paprika fumé, de la poudre d'ail, du thym et du zeste. Saler et poivrer.",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Déposer le poulet peau en dessous.",
+        "Cuire 12 minutes, retourner peau vers le haut, puis cuire 10 à 12 minutes, jusqu'à ce que la peau soit croustillante et que le poulet atteigne 74 °C (165 °F) près de l'os.",
+        "Servir avec des grelots et une salade."
+      ],
+      "Tâches sous-chef": [
+        "Éponger le poulet",
+        "Zester le citron",
+        "Mélanger les épices"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-cotelettes-de-porc-panees-parmesan",
+      "Nom": "Côtelettes de porc panées au parmesan à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Porc",
+      "Cuisine": "Italienne",
+      "Soir de semaine": true,
+      "Temps total (min)": 25,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "4 côtelettes de porc désossées de 2 cm (¾ po)",
+        "1 œuf",
+        "15 ml (1 c. à soupe) de moutarde de Dijon",
+        "125 ml (½ tasse) de chapelure panko",
+        "60 ml (¼ tasse) de parmesan râpé",
+        "5 ml (1 c. à thé) d'assaisonnement italien",
+        "Huile en vaporisateur",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Dans un bol, battre l'œuf avec la moutarde. Dans une assiette, mélanger le panko, le parmesan et l'assaisonnement italien.",
+        "Saler et poivrer les côtelettes. Les tremper dans l'œuf, puis les enrober de panure en pressant.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Vaporiser le panier et les côtelettes d'huile.",
+        "Cuire 6 minutes, retourner, puis cuire 5 à 6 minutes, jusqu'à 63 °C (145 °F) au centre et une panure dorée."
+      ],
+      "Tâches sous-chef": [
+        "Battre l'œuf avec la moutarde",
+        "Mélanger la panure",
+        "Paner les côtelettes"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-crevettes-a-l-ail-et-citron",
+      "Nom": "Crevettes à l'ail et au citron à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Poisson & fruits de mer",
+      "Cuisine": "Méditerranéenne",
+      "Soir de semaine": true,
+      "Temps total (min)": 15,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "450 g (1 lb) de grosses crevettes crues, décortiquées (décongelées et épongées)",
+        "30 ml (2 c. à soupe) de beurre, fondu",
+        "3 gousses d'ail, hachées",
+        "2,5 ml (½ c. à thé) de paprika",
+        "1 pincée de flocons de piment (facultatif)",
+        "Le jus de ½ citron",
+        "15 ml (1 c. à soupe) de persil haché",
+        "Sel et poivre",
+        "## Pour servir",
+        "Riz, pâtes ou salade"
+      ],
+      "Étapes": [
+        "Mélanger les crevettes avec le beurre fondu, l'ail, le paprika et le piment. Saler et poivrer.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Étaler les crevettes en une seule couche.",
+        "Cuire 6 à 8 minutes en secouant à mi-cuisson, jusqu'à ce qu'elles soient roses et opaques.",
+        "Arroser de jus de citron, parsemer de persil et servir sur du riz, des pâtes ou une salade."
+      ],
+      "Tâches sous-chef": [
+        "Éponger les crevettes",
+        "Presser le citron",
+        "Couper le persil aux ciseaux"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-poisson-pane-fish-and-chips",
+      "Nom": "Poisson pané façon fish and chips à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Poisson & fruits de mer",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 30,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "4 filets d'aiglefin ou de morue (environ 600 g / 1 ⅓ lb)",
+        "60 ml (¼ tasse) de farine",
+        "2 œufs",
+        "250 ml (1 tasse) de chapelure panko",
+        "5 ml (1 c. à thé) de paprika",
+        "2,5 ml (½ c. à thé) de poudre d'ail",
+        "Huile en vaporisateur",
+        "Sel et poivre",
+        "## Sauce tartare express",
+        "125 ml (½ tasse) de mayonnaise",
+        "30 ml (2 c. à soupe) de relish",
+        "5 ml (1 c. à thé) de jus de citron"
+      ],
+      "Étapes": [
+        "Mélanger les ingrédients de la sauce tartare. Réserver au froid.",
+        "Préparer 3 assiettes : la farine; les œufs battus; le panko mélangé au paprika et à la poudre d'ail.",
+        "Éponger les filets d'aiglefin ou de morue, saler et poivrer. Le passer dans la farine, l'œuf, puis le panko.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Vaporiser le panier et le poisson d'huile.",
+        "Cuire 10 à 12 minutes en retournant à mi-cuisson, jusqu'à ce que la chair se défasse.",
+        "Servir avec des frites (fiche Frites maison à l'air fryer) et la sauce tartare."
+      ],
+      "Tâches sous-chef": [
+        "Mélanger la sauce tartare",
+        "Battre les œufs",
+        "Paner le poisson"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-batonnets-de-mozzarella",
+      "Nom": "Bâtonnets de mozzarella à l'air fryer",
+      "Type": "Collation",
+      "Statut": "À trier",
+      "Protéine": "Végé",
+      "Cuisine": "Italienne",
+      "Soir de semaine": false,
+      "Temps total (min)": 95,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "12 bâtonnets de fromage mozzarella (type ficelle)",
+        "60 ml (¼ tasse) de farine",
+        "2 œufs, battus",
+        "250 ml (1 tasse) de chapelure italienne (ou panko)",
+        "30 ml (2 c. à soupe) de parmesan râpé",
+        "Huile en vaporisateur",
+        "Sauce marinara, pour tremper"
+      ],
+      "Étapes": [
+        "Couper les bâtonnets en deux. Les passer dans la farine, l'œuf, puis la chapelure mélangée au parmesan.",
+        "Repasser dans l'œuf et la chapelure (double panure : ça évite que le fromage coule).",
+        "Congeler au moins 1 heure sur une plaque. C'est essentiel.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Vaporiser d'huile et cuire 6 à 7 minutes, jusqu'à ce qu'ils soient dorés. Surveiller la fin.",
+        "Servir aussitôt avec la sauce marinara chaude."
+      ],
+      "Tâches sous-chef": [
+        "Couper les bâtonnets en deux",
+        "Faire la double panure",
+        "Ranger les bâtonnets sur la plaque"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Temps total avec 1 h de congélation obligatoire. Se prépare d'avance et se garde congelé.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-choux-de-bruxelles-erable-bacon",
+      "Nom": "Choux de Bruxelles érable et bacon à l'air fryer",
+      "Type": "Accompagnement",
+      "Statut": "À trier",
+      "Protéine": "Porc",
+      "Cuisine": "Québécoise",
+      "Soir de semaine": true,
+      "Temps total (min)": 25,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "450 g (1 lb) de choux de Bruxelles, parés et coupés en deux",
+        "3 tranches de bacon, en morceaux",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "15 ml (1 c. à soupe) de sirop d'érable",
+        "5 ml (1 c. à thé) de vinaigre balsamique",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Mélanger les choux avec l'huile. Saler et poivrer.",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Déposer les choux et le bacon dans le panier.",
+        "Cuire 15 à 18 minutes en secouant 2 fois, jusqu'à ce que les choux soient dorés et le bacon croustillant.",
+        "Arroser de sirop d'érable et de vinaigre balsamique, remuer et servir."
+      ],
+      "Tâches sous-chef": [
+        "Parer les choux et les couper en deux (couteau d'office)",
+        "Couper le bacon aux ciseaux",
+        "Mesurer l'érable et le balsamique"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-brocoli-et-chou-fleur-parmesan",
+      "Nom": "Brocoli et chou-fleur rôtis au parmesan à l'air fryer",
+      "Type": "Accompagnement",
+      "Statut": "À trier",
+      "Protéine": "Végé",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 20,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "500 ml (2 tasses) de bouquets de brocoli",
+        "500 ml (2 tasses) de bouquets de chou-fleur",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "2,5 ml (½ c. à thé) de poudre d'ail",
+        "30 ml (2 c. à soupe) de parmesan râpé",
+        "Le jus de ¼ de citron",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Mélanger les légumes avec l'huile et la poudre d'ail. Saler et poivrer.",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Cuire 10 à 12 minutes en secouant à mi-cuisson.",
+        "Parsemer de parmesan et cuire 1 minute de plus.",
+        "Arroser de citron et servir."
+      ],
+      "Tâches sous-chef": [
+        "Défaire les bouquets à la main",
+        "Mélanger avec l'huile",
+        "Parsemer le parmesan"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-oeufs-durs",
+      "Nom": "Œufs durs à l'air fryer",
+      "Type": "Déjeuner",
+      "Statut": "À trier",
+      "Protéine": "Œufs",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 20,
+      "Portions": 6,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "6 œufs, sortis du frigo",
+        "1 L (4 tasses) d'eau froide",
+        "500 ml (2 tasses) de glaçons",
+        "Sel et poivre, pour servir"
+      ],
+      "Étapes": [
+        "Préchauffer l'air fryer à 130 °C (270 °F).",
+        "Déposer les œufs directement dans le panier. Cuire 15 minutes pour des œufs durs (11 minutes pour un jaune mollet).",
+        "Pendant ce temps, mettre l'eau froide et les glaçons dans un bol.",
+        "Plonger aussitôt les œufs dans l'eau glacée 5 minutes, puis les écaler. Saler et poivrer au moment de servir."
+      ],
+      "Tâches sous-chef": [
+        "Déposer les œufs dans le panier",
+        "Préparer le bol d'eau glacée",
+        "Écaler les œufs"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Le temps varie selon l'appareil : faire un essai avec 1 œuf la première fois.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-bacon-croustillant",
+      "Nom": "Bacon croustillant à l'air fryer",
+      "Type": "Déjeuner",
+      "Statut": "À trier",
+      "Protéine": "Porc",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 12,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "8 tranches de bacon (coupe régulière)",
+        "15 ml (1 c. à soupe) de sirop d'érable (facultatif, pour un bacon laqué)",
+        "Poivre noir moulu, au goût",
+        "4 tranches de pain grillé, pour servir"
+      ],
+      "Étapes": [
+        "Déposer les tranches de bacon en une seule couche dans le panier, sans les superposer (couper en deux au besoin).",
+        "Cuire à 180 °C (350 °F) de 8 à 10 minutes, selon le croustillant voulu. Pas besoin de préchauffer.",
+        "Pour un bacon laqué, badigeonner de sirop d'érable et poivrer les 2 dernières minutes.",
+        "Égoutter sur du papier absorbant et servir avec le pain grillé. Laisser le gras refroidir avant de nettoyer le tiroir."
+      ],
+      "Tâches sous-chef": [
+        "Placer les tranches dans le panier",
+        "Préparer l'assiette avec du papier absorbant"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Bacon épais : 12 à 14 minutes.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-pain-dore-en-batonnets",
+      "Nom": "Pain doré en bâtonnets à l'air fryer",
+      "Type": "Déjeuner",
+      "Statut": "À trier",
+      "Protéine": "Œufs",
+      "Cuisine": "Québécoise",
+      "Soir de semaine": true,
+      "Temps total (min)": 20,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "6 tranches de pain épaisses (brioché ou pain de ménage), coupées en 3 bâtonnets",
+        "2 œufs",
+        "125 ml (½ tasse) de lait",
+        "15 ml (1 c. à soupe) de sucre",
+        "5 ml (1 c. à thé) de cannelle",
+        "2,5 ml (½ c. à thé) d'extrait de vanille",
+        "Huile en vaporisateur",
+        "Sirop d'érable, pour servir"
+      ],
+      "Étapes": [
+        "Dans un plat, fouetter les œufs, le lait, le sucre, la cannelle et la vanille.",
+        "Tremper les bâtonnets de pain rapidement des deux côtés.",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Vaporiser le panier d'huile et y déposer les bâtonnets en une seule couche.",
+        "Cuire 5 minutes, retourner et cuire 3 à 4 minutes, jusqu'à ce qu'ils soient dorés.",
+        "Servir avec du sirop d'érable pour tremper."
+      ],
+      "Tâches sous-chef": [
+        "Fouetter les œufs et le lait",
+        "Tremper les bâtonnets",
+        "Verser le sirop d'érable dans des petits bols"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-pommes-cuites-a-la-cannelle",
+      "Nom": "Pommes cuites à la cannelle et crumble à l'air fryer",
+      "Type": "Dessert",
+      "Statut": "À trier",
+      "Protéine": null,
+      "Cuisine": "Québécoise",
+      "Soir de semaine": true,
+      "Temps total (min)": 25,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "2 pommes Cortland ou Honeycrisp, coupées en deux et épépinées",
+        "15 ml (1 c. à soupe) de beurre, fondu",
+        "## Crumble",
+        "30 ml (2 c. à soupe) de flocons d'avoine",
+        "15 ml (1 c. à soupe) de farine",
+        "15 ml (1 c. à soupe) de cassonade",
+        "15 ml (1 c. à soupe) de beurre, fondu",
+        "2,5 ml (½ c. à thé) de cannelle",
+        "## Pour servir",
+        "Crème glacée à la vanille ou yogourt"
+      ],
+      "Étapes": [
+        "Badigeonner l'intérieur des demi-pommes de beurre fondu.",
+        "Mélanger les ingrédients du crumble et en garnir chaque demi-pomme.",
+        "Préchauffer l'air fryer à 180 °C (350 °F). Cuire 15 à 18 minutes, jusqu'à ce que les pommes soient tendres.",
+        "Servir tiède avec de la crème glacée."
+      ],
+      "Tâches sous-chef": [
+        "Mélanger le crumble avec les doigts",
+        "Garnir les demi-pommes",
+        "Faire les boules de crème glacée"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-rondelles-d-oignon",
+      "Nom": "Rondelles d'oignon panées à l'air fryer",
+      "Type": "Accompagnement",
+      "Statut": "À trier",
+      "Protéine": "Végé",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 30,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "1 gros oignon espagnol, en rondelles de 1 cm (½ po)",
+        "125 ml (½ tasse) de farine",
+        "5 ml (1 c. à thé) de paprika",
+        "2 œufs",
+        "60 ml (¼ tasse) de lait",
+        "375 ml (1 ½ tasse) de chapelure panko",
+        "Huile en vaporisateur",
+        "Sel"
+      ],
+      "Étapes": [
+        "Séparer les rondelles d'oignon. Préparer 3 bols : la farine et le paprika; les œufs battus avec le lait; le panko.",
+        "Passer chaque rondelle dans la farine, l'œuf, puis le panko.",
+        "Préchauffer l'air fryer à 200 °C (400 °F). Vaporiser d'huile et cuire en une seule couche 8 à 10 minutes, en retournant à mi-cuisson.",
+        "Saler à la sortie et servir avec du ketchup ou une mayo épicée."
+      ],
+      "Tâches sous-chef": [
+        "Séparer les rondelles",
+        "Paner les rondelles",
+        "Battre les œufs avec le lait"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Plusieurs fournées selon la taille du panier.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-pois-chiches-grilles-epices",
+      "Nom": "Pois chiches grillés épicés à l'air fryer",
+      "Type": "Collation",
+      "Statut": "À trier",
+      "Protéine": "Végé",
+      "Cuisine": "Méditerranéenne",
+      "Soir de semaine": true,
+      "Temps total (min)": 25,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "1 boîte de 540 ml (19 oz) de pois chiches, rincés et égouttés",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "5 ml (1 c. à thé) de paprika fumé",
+        "2,5 ml (½ c. à thé) de cumin",
+        "2,5 ml (½ c. à thé) de poudre d'ail",
+        "2,5 ml (½ c. à thé) de sel"
+      ],
+      "Étapes": [
+        "Bien éponger les pois chiches (retirer les peaux qui se détachent).",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Cuire les pois chiches nature 10 minutes.",
+        "Les mettre dans un bol avec l'huile, le paprika fumé, le cumin, la poudre d'ail et le sel. Remuer.",
+        "Remettre dans l'air fryer 8 à 10 minutes en secouant, jusqu'à ce qu'ils soient croquants. Laisser refroidir : ils croquent encore plus."
+      ],
+      "Tâches sous-chef": [
+        "Rincer et éponger les pois chiches",
+        "Mesurer les épices",
+        "Secouer le panier"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Se gardent 2 jours à découvert ; ils ramollissent dans un contenant fermé.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-hamburgers",
+      "Nom": "Hamburgers juteux à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Bœuf",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 25,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "565 g (1 ¼ lb) de bœuf haché mi-maigre",
+        "15 ml (1 c. à soupe) de sauce Worcestershire",
+        "2,5 ml (½ c. à thé) de poudre d'oignon",
+        "2,5 ml (½ c. à thé) de poudre d'ail",
+        "4 tranches de cheddar",
+        "4 pains à hamburger",
+        "Sel et poivre",
+        "## Garnitures",
+        "Laitue, tomate, oignon, cornichons, ketchup, moutarde, mayonnaise"
+      ],
+      "Étapes": [
+        "Mélanger délicatement le bœuf, la Worcestershire et les poudres. Saler et poivrer.",
+        "Façonner 4 galettes un peu plus larges que les pains. Faire un petit creux au centre avec le pouce (elles restent plates).",
+        "Préchauffer l'air fryer à 190 °C (375 °F). Cuire 6 minutes, retourner, puis cuire 4 à 6 minutes, jusqu'à 71 °C (160 °F) au centre.",
+        "Déposer le fromage la dernière minute. Griller les pains 1 à 2 minutes dans l'air fryer.",
+        "Monter les burgers avec les garnitures."
+      ],
+      "Tâches sous-chef": [
+        "Façonner les galettes",
+        "Laver la laitue et préparer les garnitures",
+        "Monter son burger"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    },
+    {
+      "id": "k-airfryer-saucisses-et-legumes",
+      "Nom": "Saucisses et légumes en un panier à l'air fryer",
+      "Type": "Souper",
+      "Statut": "À trier",
+      "Protéine": "Porc",
+      "Cuisine": "Classique",
+      "Soir de semaine": true,
+      "Temps total (min)": 30,
+      "Portions": 4,
+      "Outils": "Air fryer",
+      "Étiquettes": "Air fryer",
+      "Source": "Web autre",
+      "Ingrédients": [
+        "6 saucisses italiennes douces (ou au choix), coupées en tronçons de 3 cm",
+        "2 poivrons de couleur, en morceaux",
+        "1 oignon rouge, en quartiers",
+        "1 courgette, en demi-rondelles",
+        "300 g (⅔ lb) de pommes de terre grelots, en quartiers",
+        "15 ml (1 c. à soupe) d'huile d'olive",
+        "5 ml (1 c. à thé) d'assaisonnement italien",
+        "Sel et poivre"
+      ],
+      "Étapes": [
+        "Mélanger les grelots avec la moitié de l'huile. Préchauffer l'air fryer à 200 °C (400 °F) et les cuire 8 minutes.",
+        "Pendant ce temps, mélanger les poivrons, l'oignon et la courgette avec le reste de l'huile et l'assaisonnement. Saler et poivrer.",
+        "Ajouter les saucisses et les légumes aux grelots. Cuire 12 à 14 minutes en secouant 2 fois, jusqu'à ce que les saucisses soient cuites (71 °C / 160 °F).",
+        "Servir tel quel, ou avec de la moutarde de Dijon."
+      ],
+      "Tâches sous-chef": [
+        "Couper la courgette (couteau d'office)",
+        "Mélanger les légumes avec l'huile",
+        "Secouer le panier (avec un gant)"
+      ],
+      "À vérifier": "Recette type rédigée par Claude, à valider à l'essai. Temps et températures usuels, à ajuster selon ton appareil. Si le panier est petit, cuire en 2 fournées.",
+      "Fiche complète": true,
+      "Notes": [
+        "Kit de départ Air fryer : recette type rédigée par Claude à la demande de JP, sans recette d'inspiration précise."
+      ]
+    }
+  ],
+  "plans": [],
+  "inventaire": [],
+  "bilans": []
+}
