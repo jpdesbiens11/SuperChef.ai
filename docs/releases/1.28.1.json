@@ -1,0 +1,25 @@
+{
+  "version": "1.28.1",
+  "date": "2026-11-22",
+  "mvp": "SuperChef.ai — Au poêle : chaque ingrédient une seule fois, à la bonne étape",
+  "requis": [
+    "R-05"
+  ],
+  "nouveautes": [
+    "Au poêle, un ingrédient s'affiche à l'étape où il entre dans la recette. « Remettre la viande », « Égoutter les pâtes » ne le ramènent plus dans « Pour cette étape » (894 répétitions en moins sur le livre de JP).",
+    "Il revient seulement quand l'étape en donne une portion (« le reste du beurre », « 15 ml de… »), comme avant.",
+    "Moins de faux appariements : « bouillon de bœuf » n'est plus dans « dorer le bœuf », « champignons blancs » plus dans « blanchir », « jus d'orange » plus dans « le jus de cuisson », « 1 grande boîte » plus dans « un grand chaudron ».",
+    "Deux lignes qui se disputent un mot : celle que l'étape nomme le mieux l'a (« Ajouter l'oignon » est à « 1 oignon », les oignons perlés entrent à « blanchir les oignons perlés » ; « 1 lime, en quartiers » entre à « Garnir de quartiers de lime »)."
+  ],
+  "decisions": [
+    "D-G-067"
+  ],
+  "tests": {
+    "unitaires": 92,
+    "bout_en_bout": 73,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}

@@ -56,3 +56,41 @@ test('D-G-050 : groupes, étiquettes, usages et mots généraux', () => {
   assert.deepEqual(etape(d, 1), ['5 ml de cumin moulu', '500 g de veau haché']);
   assert.deepEqual(etape(d, 0), ['2 carottes']);
 });
+
+// D-G-067 : un ingrédient se montre à l'étape où il entre, puis seulement là où l'étape en donne une portion.
+const plan = (ing, etapes) => { const d = ficheDeLigne({ ingText: ing.join('\n'), stepsText: etapes.join('\n'), sous: '' }); const p = stepPlan(d); return p.per.map((l) => l.map((k) => d.ing[k].text)); };
+
+test('D-G-067 : « Remettre la viande », « Égoutter les pâtes » ne ramènent pas l\'ingrédient', () => {
+  const per = plan(['450 g de bœuf haché', '375 g de pâtes', '1 oignon, haché'],
+    ['Dorer le bœuf dans une poêle. Réserver.', 'Cuire les pâtes al dente.', 'Attendrir l\'oignon, puis remettre le bœuf.', 'Égoutter les pâtes et les ajouter à la sauce.']);
+  assert.deepEqual(per, [['450 g de bœuf haché'], ['375 g de pâtes'], ['1 oignon, haché'], []]);
+});
+
+test('D-G-067 : une étape qui donne une portion garde l\'ingrédient (D-G-032)', () => {
+  const per = plan(['60 ml de beurre', '2 oignons'], ['Fondre 30 ml de beurre et dorer les oignons.', 'Ajouter le reste du beurre.']);
+  assert.deepEqual(per, [['60 ml de beurre', '2 oignons'], ['60 ml de beurre']]);
+});
+
+test('D-G-067 : « bouillon de bœuf » n\'est pas dans « dorer le bœuf », « champignons blancs » pas dans « blanchir »', () => {
+  const per = plan(['1 kg de cubes de bœuf', '750 ml de bouillon de bœuf', '280 g de petits oignons perlés', '340 g de champignons blancs'],
+    ['Dorer le bœuf.', 'Ajouter le bouillon.', 'Blanchir les oignons perlés 2 minutes.', 'Faire sauter les champignons.']);
+  assert.deepEqual(per, [['1 kg de cubes de bœuf'], ['750 ml de bouillon de bœuf'], ['280 g de petits oignons perlés'], ['340 g de champignons blancs']]);
+});
+
+test('D-G-067 : la ligne que l\'étape nomme le mieux a le mot ; les autres entrent plus loin', () => {
+  // « l'oignon » (une fois) est à « 1 oignon » ; les oignons perlés entrent à leur étape à eux
+  assert.deepEqual(plan(['1 oignon', '280 g de petits oignons perlés'], ['Ajouter l\'oignon.', 'Blanchir les oignons perlés.']),
+    [['1 oignon'], ['280 g de petits oignons perlés']]);
+  // « le jus de lime » est au jus ; « 1 lime, en quartiers » entre à « garnir de quartiers de lime »
+  assert.deepEqual(plan(['45 ml de jus de lime', '1 lime, en quartiers'], ['Mélanger le jus de lime et le sucre.', 'Garnir de quartiers de lime.']),
+    [['45 ml de jus de lime'], ['1 lime, en quartiers']]);
+  // « les tomates… la pâte de tomates » : le mot revient deux fois, les deux lignes y sont
+  assert.deepEqual(plan(['900 g de tomates italiennes', '45 ml de pâte de tomates'], ['Mettre les tomates et la pâte de tomates dans la cocotte.']),
+    [['900 g de tomates italiennes', '45 ml de pâte de tomates']]);
+});
+
+test('D-G-067 : « jus d\'orange » n\'est pas « le jus de cuisson », « 1 grande boîte » pas « un grand chaudron »', () => {
+  const per = plan(['250 ml de jus d\'orange', '1 grande boîte de sauce tomate', '2 oignons'],
+    ['Dans un grand chaudron, dorer les oignons.', 'Ajouter le jus d\'orange et la sauce tomate.', 'Laisser reposer la viande dans son jus de cuisson.']);
+  assert.deepEqual(per, [['2 oignons'], ['250 ml de jus d\'orange', '1 grande boîte de sauce tomate'], []]);
+});
