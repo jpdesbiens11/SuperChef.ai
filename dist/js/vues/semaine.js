@@ -1,9 +1,9 @@
 // 03 · Semaine : plan, choix, desserts, approbation (R-07 à R-09). Repris de Gordon Rams.ai.
-import { S, $, DAYS, MOIS, dayDate, weekLabel, norm, toast, errText, render, starsOf, starLabel } from '../etat.js?v=1.28.1';
-import { el, ico, vider } from '../el.js?v=1.28.1';
-import { savePlan as ecrirePlan } from '../donnees.js?v=1.28.1';
-import { pickFor, setDay, setFixed, recentFor } from '../planif.js?v=1.28.1';
-import { panelHead, frameEmpty, skeleton, starRow, recipeMeta, chips, dname } from './commun.js?v=1.28.1';
+import { S, $, DAYS, MOIS, dayDate, weekLabel, norm, toast, errText, render, starsOf, starLabel } from '../etat.js?v=1.28.2';
+import { el, ico, vider } from '../el.js?v=1.28.2';
+import { savePlan as ecrirePlan } from '../donnees.js?v=1.28.2';
+import { pickFor, setDay, setFixed, recentFor, ecartSemaines, nomEcart } from '../planif.js?v=1.28.2';
+import { panelHead, frameEmpty, skeleton, starRow, recipeMeta, chips, dname } from './commun.js?v=1.28.2';
 
 // D-G-061 : vue compacte (une ligne par soir) par défaut au téléphone ; « Détails » rend les grandes cartes.
 const CLE_VUE = 'superchef-semaine-vue';
@@ -46,9 +46,13 @@ function jourCompact(d, i, neuf) {
 
 export function viewWeek() {
   const compacte = semaineCompacte();
-  const out = [panelHead('03 · Plan de semaine', weekLabel(), compacte
+  const ecart = ecartSemaines();
+  const out = [panelHead(`03 · Plan de semaine${ecart ? ' · ' + nomEcart(ecart) : ''}`, weekLabel(), compacte
     ? 'Pige ou choisis tes soupers. Touche un souper pour sa recette, le poêle ou le PDF.'
     : 'Dimanche au mercredi par défaut ; ajoute un soir au besoin. Choisis toi-même un souper (une fois ou chaque semaine), puis pige le reste. Aucune recette des 3 dernières semaines, sauf les fixes.')];
+  // D-G-068 : une autre semaine que celle en cours est affichée (choisie dans le menu Compte) : on le dit, et on y revient d'un toucher.
+  if (ecart) out.push(el('div', { class: 'notice sem-autre' }, ico('alert'), el('p', {}, `Tu regardes ${nomEcart(ecart)}. Change de semaine dans 👥 Compte.`),
+    el('button', { class: 'btn', type: 'button', 'data-semnav': '0' }, 'Cette semaine')));
   out.push(el('div', { class: `daytog${compacte ? ' serre' : ''}`, role: 'group', 'aria-label': 'Soirs à planifier' },
     DAYS.map((d, i) => el('button', { class: 'btn', 'data-dtog': i, 'aria-pressed': String(S.on[i]) }, ico(S.on[i] ? 'check' : 'plus'), d.slice(0, 3)))));
   if (S.loading) return [...out, el('div', { class: 'week' }, DAYS.filter((d, i) => S.on[i]).map(() => skeleton()))];

@@ -1,5 +1,5 @@
 // État et constantes partagés, repris de Gordon Rams.ai.
-import { el } from './el.js?v=1.28.1';
+import { el } from './el.js?v=1.28.2';
 
 export const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 export const BASE_DAYS = 4; // dimanche au mercredi par défaut ; jeudi à samedi au besoin
@@ -48,12 +48,11 @@ export function toast(msg, action) {
   t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, action ? 5000 : 2600);
 }
 
-export function computeWeek(maintenant = new Date()) {
-  const d = new Date(maintenant); d.setHours(0, 0, 0, 0);
-  const wd = d.getDay(); // 0 dim, 6 sam — semaine de souper : dimanche au mercredi
-  d.setDate(d.getDate() + (wd <= 3 ? -wd : 7 - wd));
-  return d;
-}
+// D-G-068 : la semaine affichée est celle en cours, du dimanche au samedi ; la suivante paraît le dimanche
+// (avant : dès le jeudi, et un souper prévu jeudi, vendredi ou samedi disparaissait). Les autres semaines : menu Compte.
+export function computeWeek(maintenant = new Date()) { return semaineEnCours(maintenant); }
+// Dimanche de la semaine où l'on est.
+export function semaineEnCours(maintenant = new Date()) { const d = new Date(maintenant); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - d.getDay()); return d; }
 export function dayDate(i) { const d = new Date(S.weekStart); d.setDate(d.getDate() + i); return d; }
 export function weekLabel() {
   const last = Math.max(...S.on.map((v, i) => (v ? i : 0))); const a = dayDate(0), b = dayDate(last);

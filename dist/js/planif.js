@@ -1,6 +1,6 @@
 // Planification de la semaine et règle des 3 semaines (R-07, R-08, R-09). Repris de Gordon Rams.ai.
-import { S, DAYS, GAP_DAYS, iso, render, toast, errText } from './etat.js?v=1.28.1';
-import { majRecette } from './donnees.js?v=1.28.1';
+import { S, DAYS, GAP_DAYS, BASE_DAYS, iso, semaineEnCours, render, toast, errText } from './etat.js?v=1.28.2';
+import { majRecette } from './donnees.js?v=1.28.2';
 
 export function tooSoon(r) { if (!r.last) return false; const d = Math.abs((new Date(S.weekStart) - new Date(r.last + 'T12:00:00')) / 864e5); return d < GAP_DAYS; }
 export const isFixed = (id) => Object.values(S.fixed || {}).includes(id);
@@ -87,5 +87,17 @@ export function reprendreBrouillon() {
   S.plan = b.plan; S.on = DAYS.map((d, i) => !!b.on[i]); S.pins = new Set((b.pins || []).filter((i) => S.plan[i]));
   S.dess = (b.dess || []).filter((x) => S.byId[x.id]);
   S.saved = false; S.prov.lines = null; S.swapped = DAYS.map(() => new Set());
+  return true;
+}
+
+// D-G-068 : naviguer de semaine en semaine (menu Compte) ; la semaine en cours revient d'un toucher.
+export const ecartSemaines = () => Math.round((new Date(S.weekStart) - semaineEnCours()) / (7 * 864e5));
+export const nomEcart = (e = ecartSemaines()) => (e === 0 ? 'cette semaine' : e === 1 ? 'la semaine prochaine' : e === -1 ? 'la semaine passée'
+  : e > 1 ? `dans ${e} semaines` : `il y a ${-e} semaines`);
+export function allerSemaine(delta) {
+  const cible = ecartSemaines() + delta; if (!delta || cible < -12 || cible > 4) return false;
+  garderBrouillon();                                                   // le brouillon de la semaine qu'on quitte reste
+  const d = new Date(S.weekStart); d.setDate(d.getDate() + 7 * delta); S.weekStart = d;
+  S.plan = DAYS.map(() => null); S.on = DAYS.map((x, i) => i < BASE_DAYS); S.pins = new Set(); S.dess = []; S.have = new Set();
   return true;
 }
