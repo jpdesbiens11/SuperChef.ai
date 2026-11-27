@@ -1,11 +1,23 @@
 // Feuille Compte : connexion, classeur, import (R-02). Même gabarit que les feuilles de Gordon Rams.ai.
-import { S, $, toast } from '../etat.js?v=1.28.1';
-import { el, ico, vider } from '../el.js?v=1.28.1';
-import { lienClasseur, lienDossier, reinitialiser, texteReparation } from '../store.js?v=1.28.1';
-import { valider, importer } from '../import.js?v=1.28.1';
-import { CONFIG } from '../config.js?v=1.28.1';
-import { iaDisponible } from '../ia.js?v=1.28.1';
+import { S, $, toast, weekLabel } from '../etat.js?v=1.28.2';
+import { el, ico, vider } from '../el.js?v=1.28.2';
+import { lienClasseur, lienDossier, reinitialiser, texteReparation } from '../store.js?v=1.28.2';
+import { valider, importer } from '../import.js?v=1.28.2';
+import { CONFIG } from '../config.js?v=1.28.2';
+import { iaDisponible } from '../ia.js?v=1.28.2';
+import { ecartSemaines, nomEcart } from '../planif.js?v=1.28.2';
 
+// D-G-068 : la semaine affichée, et les flèches pour aller de semaine en semaine.
+export function ligneSemaine() {
+  const e = ecartSemaines();
+  return el('div', { class: 'mrow compte-semaine', id: 'compte-semaine' },
+    el('span', {}, 'Semaine affichée', el('small', {}, `${weekLabel()} · ${nomEcart(e)}`)),
+    el('div', { class: 'sem-nav', role: 'group', 'aria-label': 'Changer de semaine' },
+      el('button', { class: 'btn icon', type: 'button', 'data-semnav': '-1', disabled: e <= -12, 'aria-label': 'Semaine d\'avant', title: 'Semaine d\'avant' }, ico('left')),
+      e !== 0 && el('button', { class: 'btn', type: 'button', 'data-semnav': '0' }, 'Cette semaine'),
+      el('button', { class: 'btn icon', type: 'button', 'data-semnav': '1', disabled: e >= 4, 'aria-label': 'Semaine d\'après', title: 'Semaine d\'après' }, ico('right'))));
+}
+export function majCompteSemaine() { $('#compte-semaine')?.replaceWith(ligneSemaine()); }
 export function openCompte(surImporter) {
   if ($('#comptesheet')) return;
   const n = el('div', { id: 'comptesheet', class: 'sheet', role: 'dialog', 'aria-modal': 'true' });
@@ -22,6 +34,7 @@ export function openCompte(surImporter) {
           el('a', { class: 'btn', href: lienClasseur(c.classeurId), target: '_blank', rel: 'noopener' }, 'Classeur'),
           c.dossier && el('a', { class: 'btn', href: lienDossier(c.dossier.id), target: '_blank', rel: 'noopener' }, 'Dossier')),
         c.messageMigration && el('p', { class: 'hint' }, c.messageMigration),
+        ligneSemaine(),
         el('div', { class: 'mrow' }, el('span', {}, 'Visite guidée', el('small', {}, 'Les fonctions de l\'app, dans l\'ordre où on s\'en sert.')),
           el('button', { class: 'btn', id: 'revoirvisite', type: 'button', 'data-new': '1.16.0-visite' }, ico('play'), 'Revoir la visite')),
         el('div', { class: 'mrow' }, el('span', {}, 'Mise en place guidée', el('small', {}, 'Pas à pas, des kits à ta première liste d\'épicerie.')),

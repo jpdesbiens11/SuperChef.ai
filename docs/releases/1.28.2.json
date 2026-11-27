@@ -1,0 +1,24 @@
+{
+  "version": "1.28.2",
+  "date": "2026-11-27",
+  "mvp": "SuperChef.ai — la semaine en cours reste affichée jusqu'au samedi ; changer de semaine dans le menu Compte",
+  "requis": [
+    "R-07"
+  ],
+  "nouveautes": [
+    "Correction : dès le jeudi, l'app passait à la semaine suivante, et un souper prévu jeudi, vendredi ou samedi disparaissait de l'écran. La semaine en cours reste maintenant affichée jusqu'au samedi ; la suivante paraît le dimanche.",
+    "Menu 👥 Compte : « Semaine affichée » avec ◀ ▶ pour aller de semaine en semaine (12 semaines en arrière, 4 en avant) et « Cette semaine » pour revenir.",
+    "Écran Semaine : quand tu regardes une autre semaine, un avis le dit, avec « Cette semaine ». Une semaine passée sans plan reste vide (rien n'est pigé après coup) ; une semaine à venir est pigée comme d'habitude, à approuver."
+  ],
+  "decisions": [
+    "D-G-068"
+  ],
+  "tests": {
+    "unitaires": 92,
+    "bout_en_bout": 75,
+    "appareils": [
+      "Galaxy S25 360 px",
+      "PC 1440 px"
+    ]
+  }
+}

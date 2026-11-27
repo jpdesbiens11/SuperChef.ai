@@ -455,3 +455,8 @@ html[data-skin="ardoise"] .frame{border-color:var(--line)}
 .notice{flex-wrap:wrap}
 .notice p{flex:1 1 200px;min-width:0}
 .notice .btn{flex:none}
+
+/* D-G-068 : semaine affichée (menu Compte) */
+.compte-semaine .sem-nav{display:flex;gap:6px;align-items:center;flex:none}
+.compte-semaine .sem-nav .btn{min-height:44px}
+.sem-autre{align-items:center}

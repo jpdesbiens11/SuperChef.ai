@@ -230,3 +230,43 @@ test('D-G-064 : « Masquer les achetés » allège la liste au fur et à mesure'
   await expect(page.locator('#prov-filtre')).toHaveAttribute('aria-checked', 'true');
   expect(erreurs).toEqual([]);
 });
+
+test('D-G-068 : jeudi soir, la semaine en cours reste ; le menu Compte change de semaine', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-26T18:30:00'));     // jeudi 26 novembre, au souper
+  const livre = { ...LIVRE, plans: [
+    { id: 'p-2026-11-22-dimanche', 'Semaine du': '2026-11-22', Jour: 'Dimanche', 'Recette id': 'r-pate', Dessert: false },
+    { id: 'p-2026-11-22-jeudi', 'Semaine du': '2026-11-22', Jour: 'Jeudi', 'Recette id': 'r-pates', Dessert: false }] };
+  const erreurs = [];
+  page.on('pageerror', (e) => erreurs.push(e.message));
+  await brancher(page);
+  await page.goto('./');
+  await page.getByRole('button', { name: 'Se connecter avec Google' }).click();
+  await page.locator('#fichier-import').setInputFiles({ name: 'livre.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(livre)) });
+  await page.locator('#lancer-import').click();
+  await expect(page.getByRole('heading', { name: 'Import terminé.' })).toBeVisible();
+  await page.locator('[data-compteclose]').click();
+  // La semaine du 22 (pas celle du 29) : le souper de ce soir est là.
+  await expect(page.locator('.panel-head h2')).toContainText('22');
+  await expect(page.locator('.week .day[data-jour="4"] h3')).toHaveText('Pâtes rosées test');
+  await expect(page.locator('.sem-autre')).toHaveCount(0);
+  // Menu Compte : semaine d'après, puis retour.
+  await page.locator('#comptebtn').click();
+  await expect(page.locator('#compte-semaine')).toContainText('cette semaine');
+  await page.locator('#compte-semaine [data-semnav="1"]').click();
+  await expect(page.locator('#compte-semaine')).toContainText('la semaine prochaine');
+  await expect(page.locator('#compte-semaine')).toContainText('29');
+  await page.locator('[data-compteclose]').click();
+  await expect(page.locator('.panel-head h2')).toContainText('29');
+  await expect(page.locator('.sem-autre')).toContainText('la semaine prochaine');
+  await expect(page.locator('.week .day[data-jour]')).toHaveCount(4);            // brouillon pigé pour la semaine à venir
+  await page.locator('.sem-autre [data-semnav="0"]').click();
+  await expect(page.locator('.week .day[data-jour="4"] h3')).toHaveText('Pâtes rosées test');
+  // Semaine passée : vide, rien n'est pigé après coup.
+  await page.locator('#comptebtn').click();
+  await page.locator('#compte-semaine [data-semnav="-1"]').click();
+  await expect(page.locator('#compte-semaine')).toContainText('la semaine passée');
+  await page.locator('[data-compteclose]').click();
+  await expect(page.locator('.week .day[data-jour]')).toHaveCount(0);
+  await expect(page.locator('#save')).toBeDisabled();
+  expect(erreurs).toEqual([]);
+});

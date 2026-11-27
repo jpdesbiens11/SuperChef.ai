@@ -1,5 +1,5 @@
 // Lecture des fiches : ingrédients, étapes, minuteurs, rayons Provigo. Repris de Gordon Rams.ai.
-import { norm, S } from './etat.js?v=1.28.1';
+import { norm, S } from './etat.js?v=1.28.2';
 
 const STOP = new Set('avec dans pour plus sans tasse tasses cuillere cuilleres soupe environ facultatif hache hachee hachees haches finement coupe coupee coupees coupes cubes tranche tranches gousse gousses grosse grosses gros petit petite petits petites moyen moyenne moyens moyennes grand grande grands grandes bon bonne bonnes feuille feuilles branche branches brin brins tige tiges botte bottes bouquet pincee pincees poignee trait sachet enveloppe boite pelees pelee goutt bien chaud froid frais fraiche litre litres paquet morceaux reserve rincee rinces egoutte preparee preparees prepare prepares'.split(' '));
 // D-G-050 : seul le nom compte (avant la virgule : « 4 gousses d'ail, coupées en deux » -> ail, pas « deux ») ;
